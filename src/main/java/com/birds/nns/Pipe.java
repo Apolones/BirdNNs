@@ -8,12 +8,8 @@ public class Pipe extends Block{
     public double holeSize=50.0;
     private double width=25.0;
 
-//    private Bird bird;
-
-
-    public Pipe(double x, double y/*, Bird bird*/) {
+    public Pipe(double x, double y) {
         super(x, y);
-//        this.bird= bird;
     }
 
     @Override
@@ -25,8 +21,6 @@ public class Pipe extends Block{
     @Override
     void UpdateState(){
         x-=speed;
-//        if (x<(bird.x+bird.radius))
-//            if (bird.y>(y+holeSize) || bird.y<(y-holeSize)) bird.GameOver();
     }
 
 

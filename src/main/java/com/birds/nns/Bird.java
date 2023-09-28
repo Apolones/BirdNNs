@@ -9,26 +9,9 @@ public class Bird extends Block{
     private double speed;
     private double headAngle;
     private double tapAcceleration;
-
     private long score;
     public static int radius;
-
     private boolean isDead;
-
-
-//    public Bird() {
-//        acceleration = 0;
-//        speed = 0;
-//        headAngle = 0;
-//        tapAcceleration = 10;
-//    }
-//
-//    public Bird(int acceleration, int speed, float headAngle, int tapAcceleration) {
-//        this.acceleration = acceleration;
-//        this.speed = speed ;
-//        this.headAngle = headAngle;
-//        this.tapAcceleration = tapAcceleration;
-//    }
 
     public Bird(double x, double y) {
         super(x, y);
@@ -61,7 +44,7 @@ public class Bird extends Block{
         context.setFont(Font.font(25));
         context.fillText(String.valueOf(score), 60,30);
     }
-//    @Override
+
     void UpdateState(Pipe pipe){
         if (pipe.x<(this.x+this.radius))
             if (this.y>(pipe.y+pipe.holeSize) || this.y<(pipe.y-pipe.holeSize)) {

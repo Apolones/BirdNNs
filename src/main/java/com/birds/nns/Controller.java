@@ -1,6 +1,7 @@
 package com.birds.nns;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -21,10 +22,10 @@ public class Controller {
     ArrayList<Bird> birdBlock = new ArrayList<>();
     @FXML
     private Button jump;
-
+    @FXML
+    private Button reset;
     @FXML
     private Canvas mainCanvas;
-
     @FXML
     void JumpBird(ActionEvent event) {
         Bird bird = (Bird) birdBlock.get(0);
@@ -44,8 +45,7 @@ public class Controller {
     }
 
     private void initBlocks() {
-        Bird bird = new Bird(30, 0);
-        birdBlock.add(bird);
+        generateBirds(1);
 
         Pipe pipe = new Pipe(mainCanvas.getWidth()-60, 60);
         pipeBlock.add(pipe);
@@ -78,23 +78,17 @@ public class Controller {
             pipe.UpdateState();
         }
 
-        for (Bird bird : birdBlock) {
-            bird.UpdateState(pipeBlock.get(0));
-        }
+        for (int i = 0; i<birdBlock.size(); i++) {
+            birdBlock.get(i).UpdateState(pipeBlock.get(0));
 
-//        List<Pipe> pipeToRemove = pipeBlock.stream()
-//                .filter(block -> block instanceof Pipe)
-//                .map(block -> (Pipe) block)
-//                .filter(pipe -> pipe.x <= 0)
-//                .collect(Collectors.toList());
-//        pipeBlock.removeAll(pipeToRemove);
+        }
 
         Pipe pipe = pipeBlock.get(0);
         if(pipe.x<=20)pipeBlock.remove(0);
     }
 
     private void generatePipes() {
-        Pipe pipeLast = (Pipe) pipeBlock.get(pipeBlock.size()-1);
+        Pipe pipeLast = pipeBlock.get(pipeBlock.size()-1);
         if (pipeLast.x>300)return;
         int y = ThreadLocalRandom.current().nextInt(100,300);
 
@@ -107,6 +101,13 @@ public class Controller {
             Bird bird = new Bird(30, 0);
             birdBlock.add(bird);
         }
+    }
+
+    public void resetGame(){
+        pipeBlock.clear();
+        birdBlock.clear();
+        initBlocks();
+
     }
 
 }
