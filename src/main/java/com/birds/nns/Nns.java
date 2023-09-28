@@ -56,7 +56,37 @@ public class Nns {
     }
 
     void nextGeneration(int best1, int best2){
-      //  int ;
+
+
+            for (int j = 0; j < (numbersOfParametrs + 1); j++) {
+                for (int k = 0; k < numbersOfNeurons; k++) {
+                    neuronsWeightHidenIn[0][j][k] = neuronsWeightHidenIn[best1][j][k];
+                    neuronsWeightHidenIn[numbersOfBird-1][j][k] = neuronsWeightHidenIn[best1][j][k];
+                }
+            }
+
+
+        for(int i = 0; i<numbersOfBird;i++) {
+            for (int j = 0; j < (numbersOfParametrs + 1); j++) {
+                for (int k = 0; k < numbersOfNeurons; k++) {
+                    neuronsWeightHidenIn[i][j][k] =neuronsWeightHidenIn[0][j][k]
+                            +Math.abs(neuronsWeightHidenIn[0][j][k]-neuronsWeightHidenIn[numbersOfBird-1][j][k])
+                            *((float) i/numbersOfBird);
+                }
+            }
+        }
+
+        for(int i = 0; i<numbersOfBird;i++){
+            neuronsWeightHidenOut[0]=neuronsWeightHidenOut[best1];
+            neuronsWeightHidenOut[numbersOfBird-1]=neuronsWeightHidenOut[best2];
+        }
+
+        for(int i = 0; i<numbersOfBird;i++)
+            for(int j = 0; j<(numbersOfNeurons+1); j++) {
+                neuronsWeightHidenOut[i][j] = neuronsWeightHidenOut[i][j] = neuronsWeightHidenOut[0][j]
+                        + Math.abs(neuronsWeightHidenOut[0][j] - neuronsWeightHidenOut[numbersOfBird - 1][j])
+                        * ((float) i / numbersOfBird);
+            }
     }
 
 
