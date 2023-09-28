@@ -47,8 +47,8 @@ public class Controller {
         Bird bird = new Bird(30, 0);
         birdBlock.add(bird);
 
-        Pipe pipe1 = new Pipe(mainCanvas.getWidth()-60, 60, bird);
-        pipeBlock.add(pipe1);
+        Pipe pipe = new Pipe(mainCanvas.getWidth()-60, 60);
+        pipeBlock.add(pipe);
     }
 
     private void onTimeTick(ActionEvent actionEvent) {
@@ -74,20 +74,23 @@ public class Controller {
         
         generatePipes();
         
-        for (Block block : pipeBlock) {
-            block.UpdateState();
+        for (Pipe pipe : pipeBlock) {
+            pipe.UpdateState();
         }
 
-        for (Block block : birdBlock) {
-            block.UpdateState();
+        for (Bird bird : birdBlock) {
+            bird.UpdateState(pipeBlock.get(0));
         }
 
-        List<Pipe> pipeToRemove = pipeBlock.stream()
+//        List<Pipe> pipeToRemove = pipeBlock.stream()
 //                .filter(block -> block instanceof Pipe)
-                .map(block -> (Pipe) block)
-                .filter(pipe -> pipe.x <= 0)
-                .collect(Collectors.toList());
-        pipeBlock.removeAll(pipeToRemove);
+//                .map(block -> (Pipe) block)
+//                .filter(pipe -> pipe.x <= 0)
+//                .collect(Collectors.toList());
+//        pipeBlock.removeAll(pipeToRemove);
+
+        Pipe pipe = pipeBlock.get(0);
+        if(pipe.x<=20)pipeBlock.remove(0);
     }
 
     private void generatePipes() {
@@ -95,7 +98,7 @@ public class Controller {
         if (pipeLast.x>300)return;
         int y = ThreadLocalRandom.current().nextInt(100,300);
 
-        Pipe pipe = new Pipe(mainCanvas.getWidth(),y , (Bird) birdBlock.get(0));
+        Pipe pipe = new Pipe(mainCanvas.getWidth(),y);
         pipeBlock.add(pipe);
     }
 

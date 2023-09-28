@@ -5,15 +5,15 @@ import javafx.scene.paint.Color;
 
 public class Pipe extends Block{
     private double speed=2.0;
-    private double holeSize=50.0;
+    public double holeSize=50.0;
     private double width=25.0;
 
-    private Bird bird;
+//    private Bird bird;
 
 
-    public Pipe(double x, double y, Bird bird) {
+    public Pipe(double x, double y/*, Bird bird*/) {
         super(x, y);
-        this.bird= bird;
+//        this.bird= bird;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class Pipe extends Block{
     @Override
     void UpdateState(){
         x-=speed;
-        if (x<(bird.x+bird.radius))
-            if (bird.y>(y+holeSize) || bird.y<(y-holeSize)) bird.GameOver();
+//        if (x<(bird.x+bird.radius))
+//            if (bird.y>(y+holeSize) || bird.y<(y-holeSize)) bird.GameOver();
     }
 
 

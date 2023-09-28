@@ -61,10 +61,16 @@ public class Bird extends Block{
         context.setFont(Font.font(25));
         context.fillText(String.valueOf(score), 60,30);
     }
-    @Override
-    void UpdateState(){
+//    @Override
+    void UpdateState(Pipe pipe){
+        if (pipe.x<(this.x+this.radius))
+            if (this.y>(pipe.y+pipe.holeSize) || this.y<(pipe.y-pipe.holeSize)) {
+                GameOver();
+                return;
+            }
         speed += acceleration;
         y += speed;
+
         if (!isDead) score++;
     }
 
