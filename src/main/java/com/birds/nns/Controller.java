@@ -20,6 +20,7 @@ public class Controller {
 
     ArrayList<Pipe> pipeBlock = new ArrayList<>();
     ArrayList<Bird> birdBlock = new ArrayList<>();
+    private Nns nns = new Nns();
     @FXML
     private Button jump;
     @FXML
@@ -42,10 +43,11 @@ public class Controller {
         timeline.play();
 
         initBlocks();
+        nns.check();
     }
 
     private void initBlocks() {
-        generateBirds(1);
+        generateBirds(nns.numbersOfBird);
 
         Pipe pipe = new Pipe(mainCanvas.getWidth()-60, 60);
         pipeBlock.add(pipe);
@@ -80,7 +82,7 @@ public class Controller {
 
         for (int i = 0; i<birdBlock.size(); i++) {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
-
+            nns.updateValueBird(i, pipeBlock.get(0).getHole(),birdBlock.get(i).getHight(),birdBlock.get(i).getAcceleration(), birdBlock.get(i).getSpeed());
         }
 
         Pipe pipe = pipeBlock.get(0);

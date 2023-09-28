@@ -47,7 +47,7 @@ public class Bird extends Block{
 
     void UpdateState(Pipe pipe){
         if (pipe.x<(this.x+this.radius))
-            if (this.y>(pipe.y+pipe.holeSize) || this.y<(pipe.y-pipe.holeSize)) {
+            if (this.y>(pipe.y+pipe.getHole()) || this.y<(pipe.y-pipe.getHole())) {
                 GameOver();
                 return;
             }
@@ -59,6 +59,18 @@ public class Bird extends Block{
 
     void GameOver(){
         isDead=true;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public double getAcceleration() {
+        return acceleration;
+    }
+
+    public double getHight() {
+        return x;
     }
 
 }
