@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 public class Bird extends Block{
     private double acceleration;
     private double speed;
+    private double maxSpeed;
     private double headAngle;
     private double tapAcceleration;
     private long score;
@@ -17,6 +18,7 @@ public class Bird extends Block{
         super(x, y);
         acceleration = 0.3;
         speed = 0;
+        maxSpeed=10;
         headAngle = 0;
         tapAcceleration = 10;
         radius=10;
@@ -32,9 +34,9 @@ public class Bird extends Block{
     void Render(GraphicsContext context){
         if (y<=0 || y>=context.getCanvas().getHeight()) GameOver();
         if (isDead) {
-            context.setFill(Color.PURPLE);
-            context.setFont(Font.font(50));
-            context.fillText("You LOSE " + score, 100,100);
+//            context.setFill(Color.PURPLE);
+//            context.setFont(Font.font(50));
+//            context.fillText("You LOSE " + score, 100,100);
             return;
         }
 
@@ -51,7 +53,7 @@ public class Bird extends Block{
                 GameOver();
                 return;
             }
-        speed += acceleration;
+        if(speed<maxSpeed) speed += acceleration;
         y += speed;
 
         if (!isDead) score++;

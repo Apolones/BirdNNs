@@ -43,13 +43,13 @@ public class Controller {
         timeline.play();
 
         initBlocks();
-        nns.check();
+//       nns.check();
     }
 
     private void initBlocks() {
         generateBirds(nns.numbersOfBird);
 
-        Pipe pipe = new Pipe(mainCanvas.getWidth()-60, 60);
+        Pipe pipe = new Pipe(mainCanvas.getWidth()-150, 250);
         pipeBlock.add(pipe);
     }
 
@@ -83,6 +83,7 @@ public class Controller {
         for (int i = 0; i<birdBlock.size(); i++) {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
             nns.updateValueBird(i, pipeBlock.get(0).getHole(),birdBlock.get(i).getHight(),birdBlock.get(i).getAcceleration(), birdBlock.get(i).getSpeed());
+            if(nns.isJump(i))birdBlock.get(i).Tap();
         }
 
         Pipe pipe = pipeBlock.get(0);
@@ -100,7 +101,7 @@ public class Controller {
 
     public void generateBirds(int number){
         for(int i = 0; i < number; i++){
-            Bird bird = new Bird(30, 0);
+            Bird bird = new Bird(30, 250);
             birdBlock.add(bird);
         }
     }
