@@ -26,10 +26,10 @@ public class Nns {
 
     }
 
-    public void updateValueBird(int numberBird, double hole, double hight, double accseleration, double speed ) {           //Do normalization !!!!
-        neuronsIn[numberBird][0]= (float) (hight/200.0f-1.0f);
-        neuronsIn[numberBird][1]=(float) (hole/200.0f-1.0f);
-        neuronsIn[numberBird][2]=(float) accseleration;
+    public void updateValueBird(int numberBird, double distanceX, double distanceTopY, double distanceBotY, double speed ) {           //Do normalization !!!!
+        neuronsIn[numberBird][0]= (float) (distanceTopY/200.0f-1.0f);
+        neuronsIn[numberBird][1]=(float) (distanceX/200.0f-1.0f);
+        neuronsIn[numberBird][2]=(float) (distanceBotY/200.0f-1.0f);
         neuronsIn[numberBird][3]= (float) (speed/5.0f-1.0f);
     }
 
@@ -50,7 +50,7 @@ public class Nns {
         }
         exitValue+=neuronsWeightHidenOut[numberBird][numbersOfNeurons];
 //        System.out.print(exitValue);
-        if (exitValue>0.0f)return true;
+        if (exitValue>0.5f)return true;
 
         return false;
     }
@@ -72,6 +72,7 @@ public class Nns {
                     neuronsWeightHidenIn[i][j][k] =neuronsWeightHidenIn[0][j][k]
                             +Math.abs(neuronsWeightHidenIn[0][j][k]-neuronsWeightHidenIn[numbersOfBird-1][j][k])
                             *((float) i/numbersOfBird);
+                    neuronsWeightHidenIn[i][j][k]= mutateGen(neuronsWeightHidenIn[i][j][k]);
                 }
             }
         }
@@ -86,7 +87,14 @@ public class Nns {
                 neuronsWeightHidenOut[i][j] = neuronsWeightHidenOut[i][j] = neuronsWeightHidenOut[0][j]
                         + Math.abs(neuronsWeightHidenOut[0][j] - neuronsWeightHidenOut[numbersOfBird - 1][j])
                         * ((float) i / numbersOfBird);
+                neuronsWeightHidenOut[i][j]=mutateGen(neuronsWeightHidenOut[i][j]);
             }
+
+    }
+
+    private float mutateGen(float genValue) {
+        if(ThreadLocalRandom.current().nextFloat()<0.1f) return (ThreadLocalRandom.current().nextFloat()*2.0f-1.0f);
+        return genValue;
     }
 
 

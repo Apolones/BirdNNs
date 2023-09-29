@@ -36,7 +36,7 @@ public class Controller {
     @FXML
     void initialize() {
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(40),
+                Duration.millis(5),
                 this::onTimeTick
         ));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -82,12 +82,41 @@ public class Controller {
 
         for (int i = 0; i<birdBlock.size(); i++) {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
-            nns.updateValueBird(i, pipeBlock.get(0).getHole(),birdBlock.get(i).getHight(),birdBlock.get(i).getAcceleration(), birdBlock.get(i).getSpeed());
+            nns.updateValueBird(i,
+                    pipeBlock.get(0).x-birdBlock.get(i).x,                                                      //distance to hole on X
+                    birdBlock.get(i).y-(pipeBlock.get(0).y-pipeBlock.get(0).getHole()),                                 //distance to hole on y upper
+                    birdBlock.get(i).y-(pipeBlock.get(0).y+pipeBlock.get(0).getHole()),                                 //distance to hole on y bottom
+                    birdBlock.get(i).getSpeed());                                                                       //bird speed
             if(nns.isJump(i))birdBlock.get(i).Tap();
         }
 
         Pipe pipe = pipeBlock.get(0);
-        if(pipe.x<=20)pipeBlock.remove(0);
+        if(pipe.x<=0)pipeBlock.remove(0);
+
+        areBirdsDead();
+    }
+
+    private void areBirdsDead() {
+        for (Bird bird: birdBlock) {
+            if(!bird.isDead()) return;
+        }
+        int best1=choiceBestBird();
+        birdBlock.get(best1).score=0;
+        int best2=choiceBestBird();
+        nns.nextGeneration(best1,best2);
+        resetGame();
+    }
+
+    private int choiceBestBird() {
+        int best=0;
+        long score=0;
+        for (int i = 0; i<birdBlock.size(); i++) {
+            if(birdBlock.get(i).score>score){
+                score=birdBlock.get(i).score;
+                best=i;
+            }
+        }
+        return best;
     }
 
     private void generatePipes() {

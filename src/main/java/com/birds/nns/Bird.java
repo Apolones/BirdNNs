@@ -10,7 +10,7 @@ public class Bird extends Block{
     private double maxSpeed;
     private double headAngle;
     private double tapAcceleration;
-    private long score;
+    public long score;
     public static int radius;
     private boolean isDead;
 
@@ -71,8 +71,9 @@ public class Bird extends Block{
         return acceleration;
     }
 
-    public double getHight() {
-        return x;
+
+    public boolean isDead() {
+        return isDead;
     }
 
 }
