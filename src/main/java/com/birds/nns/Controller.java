@@ -1,5 +1,7 @@
 package com.birds.nns;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +15,9 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.Duration;
 
 public class Controller {
@@ -27,6 +31,8 @@ public class Controller {
     private Button reset;
     @FXML
     private Canvas mainCanvas;
+    private long score=0;
+    private long maxScore=0;
     @FXML
     void JumpBird(ActionEvent event) {
         Bird bird = (Bird) birdBlock.get(0);
@@ -36,13 +42,14 @@ public class Controller {
     @FXML
     void initialize() {
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(5),
+                Duration.millis(10),
                 this::onTimeTick
         ));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
         initBlocks();
+        //test func
 //       nns.check();
     }
 
@@ -63,18 +70,26 @@ public class Controller {
         graphicsContext2D.setFill(Color.BLUE);
         graphicsContext2D.fillRect(0,0, mainCanvas.getWidth(), mainCanvas.getHeight());
 
-        for (Block block : pipeBlock) {
+        for (Pipe block : pipeBlock) {
             block.Render(graphicsContext2D);
         }
 
-        for (Block block : birdBlock) {
+        for (Bird block : birdBlock) {
             block.Render(graphicsContext2D);
         }
+
+        graphicsContext2D.setFont(Font.font(15));
+        graphicsContext2D.fillText(String.valueOf("Generation: "+nns.generation), 350,20);
+        graphicsContext2D.fillText(String.valueOf("Maximum score: " + maxScore/100), 350,40);
+
+        graphicsContext2D.setFont(Font.font(25));
+        graphicsContext2D.fillText(String.valueOf("Score: " + score/100), 30,30);
     }
 
     private void UpdateState() {
         
         generatePipes();
+        score++;
         
         for (Pipe pipe : pipeBlock) {
             pipe.UpdateState();
@@ -91,7 +106,7 @@ public class Controller {
         }
 
         Pipe pipe = pipeBlock.get(0);
-        if(pipe.x<=0)pipeBlock.remove(0);
+        if((pipe.x+ pipe.getWidth())<=0)pipeBlock.remove(0);
 
         areBirdsDead();
     }
@@ -100,10 +115,8 @@ public class Controller {
         for (Bird bird: birdBlock) {
             if(!bird.isDead()) return;
         }
-        int best1=choiceBestBird();
-        birdBlock.get(best1).score=0;
-        int best2=choiceBestBird();
-        nns.nextGeneration(best1,best2);
+        int best=choiceBestBird();
+        nns.nextGeneration(best,birdBlock.get(best).score);
         resetGame();
     }
 
@@ -138,6 +151,8 @@ public class Controller {
     public void resetGame(){
         pipeBlock.clear();
         birdBlock.clear();
+        if(score>maxScore)maxScore=score;
+        score=0;
         initBlocks();
 
     }

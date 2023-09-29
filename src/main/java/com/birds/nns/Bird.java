@@ -9,7 +9,7 @@ public class Bird extends Block{
     private double speed;
     private double maxSpeed;
     private double headAngle;
-    private double tapAcceleration;
+    private double tapSpeed;
     public long score;
     public static int radius;
     private boolean isDead;
@@ -20,57 +20,50 @@ public class Bird extends Block{
         speed = 0;
         maxSpeed=10;
         headAngle = 0;
-        tapAcceleration = 10;
+        tapSpeed = 7;
         radius=10;
         isDead = false;
         score = 0;
     }
 
     public void Tap (){
-        this.speed = -8;
+        this.speed = -tapSpeed;
     }
 
-    @Override
+//    @Override
     void Render(GraphicsContext context){
-        if (y<=0 || y>=context.getCanvas().getHeight()) GameOver();
+        if (y<=0 || y>=context.getCanvas().getHeight()) birdDead();
         if (isDead) {
-//            context.setFill(Color.PURPLE);
-//            context.setFont(Font.font(50));
-//            context.fillText("You LOSE " + score, 100,100);
             return;
         }
 
         context.setFill(Color.YELLOW);
         context.fillOval(x-radius, y-radius, radius*2, radius*2);
 
-        context.setFont(Font.font(25));
-        context.fillText(String.valueOf(score), 60,30);
+//        context.setFont(Font.font(25));
+//        context.fillText(String.valueOf("Score: " + score), 30,30);
     }
 
     void UpdateState(Pipe pipe){
-        if (pipe.x<(this.x+this.radius))
-            if (this.y>(pipe.y+pipe.getHole()) || this.y<(pipe.y-pipe.getHole())) {
-                GameOver();
-                return;
-            }
+        if (pipe.x<(x+radius))
+            if (pipe.x+pipe.getWidth()>(x-radius))
+                if (y>(pipe.y+pipe.getHole()) || y<(pipe.y-pipe.getHole())) {
+                    birdDead();
+                    return;
+                }
         if(speed<maxSpeed) speed += acceleration;
         y += speed;
 
         if (!isDead) score++;
     }
 
-    void GameOver(){
+    void birdDead(){
         isDead=true;
     }
 
     public double getSpeed() {
         return speed;
     }
-
-    public double getAcceleration() {
-        return acceleration;
-    }
-
 
     public boolean isDead() {
         return isDead;
