@@ -72,6 +72,11 @@ public class Controller {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+        try {
+            pipeImage = new Image(new FileInputStream("src/main/resources/com/birds/nns/pipe.png"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         //       pipeImage = new Image(getClass().getResourceAsStream("src/main/resources/com/birds/nns/bird.png"));
     }
 
@@ -79,7 +84,7 @@ public class Controller {
         if(manualPlay.isSelected())generateBirds(1);
         else generateBirds(nns.numbersOfBird);
 
-        Pipe pipe = new Pipe(mainCanvas.getWidth()-150, 250);
+        Pipe pipe = new Pipe(mainCanvas.getWidth()-150, 250, pipeImage);
         pipeBlock.add(pipe);
     }
 
@@ -165,7 +170,7 @@ public class Controller {
         if (pipeLast.x>300)return;
         int y = ThreadLocalRandom.current().nextInt(100,300);
 
-        Pipe pipe = new Pipe(mainCanvas.getWidth(),y);
+        Pipe pipe = new Pipe(mainCanvas.getWidth(),y, pipeImage);
         pipeBlock.add(pipe);
     }
 

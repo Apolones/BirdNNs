@@ -51,6 +51,7 @@ public class Bird extends Block{
             context.fillOval(x-radius, y-radius, radius*2, radius*2);
         }
         else {
+//            drawRotatedImage(context,image,headAngle,x-(scaleImage*radius/2) ,y-(scaleImage*radius/2), image.getWidth(), image.getHeight() );
             drawRotatedImage(context,image,headAngle,x-(scaleImage*radius/2) ,y-(scaleImage*radius/2), radius*scaleImage, radius*scaleImage );
         }
 //        context.setFont(Font.font(25));
