@@ -15,6 +15,8 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -30,7 +32,12 @@ public class Controller {
     @FXML
     private Button reset;
     @FXML
+    private Slider speedSlider;
+    @FXML
+    private ToggleButton manualPlay;
+    @FXML
     private Canvas mainCanvas;
+    Timeline timeline;
     private long score=0;
     private long maxScore=0;
     @FXML
@@ -41,20 +48,20 @@ public class Controller {
 
     @FXML
     void initialize() {
-        Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(10),
+        timeline = new Timeline(new KeyFrame(
+                Duration.millis(40),
                 this::onTimeTick
         ));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-
         initBlocks();
         //test func
 //       nns.check();
     }
 
     private void initBlocks() {
-        generateBirds(nns.numbersOfBird);
+        if(manualPlay.isSelected())generateBirds(1);
+        else generateBirds(nns.numbersOfBird);
 
         Pipe pipe = new Pipe(mainCanvas.getWidth()-150, 250);
         pipeBlock.add(pipe);
@@ -87,9 +94,14 @@ public class Controller {
     }
 
     private void UpdateState() {
-        
+        if(manualPlay.isFocused() && manualPlay.isSelected()){
+            nns.generation=0;
+            nns.bestScore=0;
+            resetGame();
+        }
         generatePipes();
         score++;
+        timeline.setRate(speedSlider.getValue());
         
         for (Pipe pipe : pipeBlock) {
             pipe.UpdateState();
@@ -102,7 +114,7 @@ public class Controller {
                     birdBlock.get(i).y-(pipeBlock.get(0).y-pipeBlock.get(0).getHole()),                                 //distance to hole on y upper
                     birdBlock.get(i).y-(pipeBlock.get(0).y+pipeBlock.get(0).getHole()),                                 //distance to hole on y bottom
                     birdBlock.get(i).getSpeed());                                                                       //bird speed
-            if(nns.isJump(i))birdBlock.get(i).Tap();
+            if(!manualPlay.isSelected() && nns.isJump(i))birdBlock.get(i).Tap();
         }
 
         Pipe pipe = pipeBlock.get(0);

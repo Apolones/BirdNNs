@@ -16,11 +16,11 @@ public class Bird extends Block{
 
     public Bird(double x, double y) {
         super(x, y);
-        acceleration = 0.3;
+        acceleration = 0.1;
         speed = 0;
-        maxSpeed=10;
+        maxSpeed=5.8;
         headAngle = 0;
-        tapSpeed = 7;
+        tapSpeed = 3.5;
         radius=10;
         isDead = false;
         score = 0;
@@ -47,7 +47,7 @@ public class Bird extends Block{
     void UpdateState(Pipe pipe){
         if (pipe.x<(x+radius))
             if (pipe.x+pipe.getWidth()>(x-radius))
-                if (y>(pipe.y+pipe.getHole()) || y<(pipe.y-pipe.getHole())) {
+                if ((y+radius)>(pipe.y+pipe.getHole()) || (y-radius)<(pipe.y-pipe.getHole())) {
                     birdDead();
                     return;
                 }

@@ -4,9 +4,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Pipe extends Block{
-    private double speed=2.0;
-    private double holeSize=50.0;
-    private double width=20.0;
+    private double speed=1.0;
+    private double holeSize=45.0;
+    private double width=40.0;
 
     public Pipe(double x, double y) {
         super(x, y);

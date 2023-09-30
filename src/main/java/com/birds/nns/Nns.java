@@ -4,10 +4,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Nns {
     public final int numbersOfBird = 50;
-    public final int numbersOfNeurons = 8;
+    public final int numbersOfNeurons = 6;
     public final int numbersOfParameters = 4;
 
     public int generation;
+    public long bestScore;
 
     private float[][] neuronsIn = new float[numbersOfBird][numbersOfParameters];                         //1-number bird 2-data bird ( 0-hight 1-hole 2-accseleration 3-speed)
     private float[][][] neuronsWeightHiddenIn = new float[numbersOfBird][numbersOfParameters +1][numbersOfNeurons];         //1-number birds 2 weight neuronsIn 3 valueHidenNeurons
@@ -15,7 +16,9 @@ public class Nns {
     private float[][] neuronsWeightHiddenOut = new float[numbersOfBird][numbersOfNeurons+1];             //1-number birds 2 weight neuronsOut
     private float[][] bestBirdWeightHiddenIn = new float[numbersOfParameters +1][numbersOfNeurons];
     private float[] bestBirdWeightHiddenOut = new float[numbersOfNeurons+1];
-    private long bestScore;
+    private float[][] deltaBirdWeightHiddenIn = new float[numbersOfParameters +1][numbersOfNeurons];
+    private float[] deltaBirdWeightHiddenOut = new float[numbersOfNeurons+1];
+
     public Nns() {
 
         generation=1;
@@ -107,6 +110,49 @@ public class Nns {
 //
 //    }
 //rewrite nextGeneration with new algorithm
+
+    void nextGeneration(int best, int bestScore){
+
+        generation++;
+
+        for (int j = 0; j < (numbersOfParameters + 1); j++)
+            for (int k = 0; k < numbersOfNeurons; k++) {
+                deltaBirdWeightHiddenIn[j][k]=bestBirdWeightHiddenIn[j][k]-neuronsWeightHiddenIn[best][j][k];
+                neuronsWeightHiddenIn[0][j][k]=bestBirdWeightHiddenIn[j][k]+(2*deltaBirdWeightHiddenIn[j][k]/numbersOfBird);
+            }
+
+
+        for(int i = 1; i<(numbersOfBird-1);i++) {
+            for (int j = 0; j < (numbersOfParameters + 1); j++) {
+                for (int k = 1; k < numbersOfNeurons; k++) {
+                    neuronsWeightHiddenIn[i][j][k] = neuronsWeightHiddenIn[i][j][k-1]+deltaBirdWeightHiddenIn[j][k];
+                    neuronsWeightHiddenIn[i][j][k]= mutateGen(neuronsWeightHiddenIn[i][j][k]);
+                }
+            }
+        }
+
+        for(int i = 0; i<(numbersOfNeurons+1);i++){
+            deltaBirdWeightHiddenOut[i]=bestBirdWeightHiddenOut[i]-neuronsWeightHiddenOut[best][i];
+            neuronsWeightHiddenOut[0][i]=bestBirdWeightHiddenOut[i]+(2*deltaBirdWeightHiddenOut[i]/numbersOfBird);
+        }
+
+        for(int i = 1; i<(numbersOfBird-1);i++)
+            for(int j = 0; j<(numbersOfNeurons+1); j++) {
+                neuronsWeightHiddenOut[i][j] = neuronsWeightHiddenOut[i][j]+deltaBirdWeightHiddenOut[j];
+                neuronsWeightHiddenOut[i][j]= mutateGen(neuronsWeightHiddenOut[i][j]);
+            }
+
+        if (bestScore>this.bestScore){
+            for (int j = 0; j < (numbersOfParameters + 1); j++)
+                for (int k = 0; k < numbersOfNeurons; k++)
+                    bestBirdWeightHiddenIn[j][k] = neuronsWeightHiddenIn[numbersOfBird - 1][j][k];
+
+            for(int i = 0; i<(numbersOfNeurons+1);i++)
+                bestBirdWeightHiddenOut[i] = neuronsWeightHiddenOut[numbersOfBird - 1][i];
+
+        }
+
+    }
     void nextGeneration(int best, long bestScore){
 
         generation++;
