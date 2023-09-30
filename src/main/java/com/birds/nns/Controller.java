@@ -2,6 +2,7 @@ package com.birds.nns;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +23,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import javax.imageio.ImageIO;
+
 public class Controller {
 
     ArrayList<Pipe> pipeBlock = new ArrayList<>();
@@ -38,6 +41,9 @@ public class Controller {
     @FXML
     private Canvas mainCanvas;
     Timeline timeline;
+
+    Image birdImage;
+    Image pipeImage;
     private long score=0;
     private long maxScore=0;
     @FXML
@@ -54,9 +60,19 @@ public class Controller {
         ));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+        loadImage();
         initBlocks();
         //test func
 //       nns.check();
+    }
+
+    private void loadImage() {
+        try {
+            birdImage = new Image(new FileInputStream("src/main/resources/com/birds/nns/bird_new.png"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        //       pipeImage = new Image(getClass().getResourceAsStream("src/main/resources/com/birds/nns/bird.png"));
     }
 
     private void initBlocks() {
@@ -84,7 +100,7 @@ public class Controller {
         for (Bird block : birdBlock) {
             block.Render(graphicsContext2D);
         }
-
+        graphicsContext2D.setFill(Color.YELLOW);
         graphicsContext2D.setFont(Font.font(15));
         graphicsContext2D.fillText(String.valueOf("Generation: "+nns.generation), 350,20);
         graphicsContext2D.fillText(String.valueOf("Maximum score: " + maxScore/100), 350,40);
@@ -110,9 +126,9 @@ public class Controller {
         for (int i = 0; i<birdBlock.size(); i++) {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
             nns.updateValueBird(i,
-                    pipeBlock.get(0).x-birdBlock.get(i).x,                                                      //distance to hole on X
-                    birdBlock.get(i).y-(pipeBlock.get(0).y-pipeBlock.get(0).getHole()),                                 //distance to hole on y upper
-                    birdBlock.get(i).y-(pipeBlock.get(0).y+pipeBlock.get(0).getHole()),                                 //distance to hole on y bottom
+                    pipeBlock.get(0).x-birdBlock.get(i).x-Bird.radius,                                                      //distance to hole on X
+                    birdBlock.get(i).y-(pipeBlock.get(0).y-pipeBlock.get(0).getHole())-Bird.radius,                                 //distance to hole on y upper
+                    birdBlock.get(i).y-(pipeBlock.get(0).y+pipeBlock.get(0).getHole())+Bird.radius,                                 //distance to hole on y bottom
                     birdBlock.get(i).getSpeed());                                                                       //bird speed
             if(!manualPlay.isSelected() && nns.isJump(i))birdBlock.get(i).Tap();
         }
@@ -155,7 +171,7 @@ public class Controller {
 
     public void generateBirds(int number){
         for(int i = 0; i < number; i++){
-            Bird bird = new Bird(30, 250);
+            Bird bird = new Bird(Bird.scaleImage*Bird.radius, mainCanvas.getHeight()/2 , birdImage);
             birdBlock.add(bird);
         }
     }

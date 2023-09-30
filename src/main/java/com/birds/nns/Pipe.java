@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 
 public class Pipe extends Block{
     private double speed=1.0;
-    private double holeSize=45.0;
+    private double holeSize=55.0;
     private double width=40.0;
 
     public Pipe(double x, double y) {
