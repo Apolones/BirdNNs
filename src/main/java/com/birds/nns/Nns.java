@@ -67,92 +67,11 @@ public class Nns {
             exitValue+= neuronsValueHidden[numberBird][i]* neuronsWeightHiddenOut[numberBird][i];
         }
         exitValue+= neuronsWeightHiddenOut[numberBird][numbersOfNeurons];
-//        System.out.print(exitValue);
         if (exitValue>0.3f)return true;
 
         return false;
     }
 
-//    void nextGeneration(int best1, int best2){
-//
-//
-//            for (int j = 0; j < (numbersOfParametrs + 1); j++) {
-//                for (int k = 0; k < numbersOfNeurons; k++) {
-//                    neuronsWeightHidenIn[0][j][k] = neuronsWeightHidenIn[best1][j][k];
-//                    neuronsWeightHidenIn[numbersOfBird-1][j][k] = neuronsWeightHidenIn[best2][j][k];
-//                }
-//            }
-//
-//
-//        for(int i = 0; i<numbersOfBird;i++) {
-//            for (int j = 0; j < (numbersOfParametrs + 1); j++) {
-//                for (int k = 0; k < numbersOfNeurons; k++) {
-//                    neuronsWeightHidenIn[i][j][k] =neuronsWeightHidenIn[0][j][k]
-//                            +Math.abs(neuronsWeightHidenIn[0][j][k]-neuronsWeightHidenIn[numbersOfBird-1][j][k])
-//                            *((float) i/numbersOfBird);
-//                    neuronsWeightHidenIn[i][j][k]= mutateGen(neuronsWeightHidenIn[i][j][k]);
-//                }
-//            }
-//        }
-//
-//        for(int i = 0; i<(numbersOfNeurons+1);i++){
-//            neuronsWeightHidenOut[0][i]=neuronsWeightHidenOut[best1][i];
-//            neuronsWeightHidenOut[numbersOfBird-1][i]=neuronsWeightHidenOut[best2][i];
-//        }
-//
-//        for(int i = 0; i<numbersOfBird;i++)
-//            for(int j = 0; j<(numbersOfNeurons+1); j++) {
-//                neuronsWeightHidenOut[i][j] = neuronsWeightHidenOut[0][j]
-//                        + Math.abs(neuronsWeightHidenOut[0][j] - neuronsWeightHidenOut[numbersOfBird - 1][j])
-//                        * ((float) i / numbersOfBird);
-//                neuronsWeightHidenOut[i][j]=mutateGen(neuronsWeightHidenOut[i][j]);
-//            }
-//
-//    }
-//rewrite nextGeneration with new algorithm
-
-    void nextGeneration(int best, int bestScore){
-
-        generation++;
-
-        for (int j = 0; j < (numbersOfParameters + 1); j++)
-            for (int k = 0; k < numbersOfNeurons; k++) {
-                deltaBirdWeightHiddenIn[j][k]=bestBirdWeightHiddenIn[j][k]-neuronsWeightHiddenIn[best][j][k];
-                neuronsWeightHiddenIn[0][j][k]=bestBirdWeightHiddenIn[j][k]+(2*deltaBirdWeightHiddenIn[j][k]/numbersOfBird);
-            }
-
-
-        for(int i = 1; i<(numbersOfBird-1);i++) {
-            for (int j = 0; j < (numbersOfParameters + 1); j++) {
-                for (int k = 1; k < numbersOfNeurons; k++) {
-                    neuronsWeightHiddenIn[i][j][k] = neuronsWeightHiddenIn[i][j][k-1]+deltaBirdWeightHiddenIn[j][k];
-                    neuronsWeightHiddenIn[i][j][k]= mutateGen(neuronsWeightHiddenIn[i][j][k]);
-                }
-            }
-        }
-
-        for(int i = 0; i<(numbersOfNeurons+1);i++){
-            deltaBirdWeightHiddenOut[i]=bestBirdWeightHiddenOut[i]-neuronsWeightHiddenOut[best][i];
-            neuronsWeightHiddenOut[0][i]=bestBirdWeightHiddenOut[i]+(2*deltaBirdWeightHiddenOut[i]/numbersOfBird);
-        }
-
-        for(int i = 1; i<(numbersOfBird-1);i++)
-            for(int j = 0; j<(numbersOfNeurons+1); j++) {
-                neuronsWeightHiddenOut[i][j] = neuronsWeightHiddenOut[i][j]+deltaBirdWeightHiddenOut[j];
-                neuronsWeightHiddenOut[i][j]= mutateGen(neuronsWeightHiddenOut[i][j]);
-            }
-
-        if (bestScore>this.bestScore){
-            for (int j = 0; j < (numbersOfParameters + 1); j++)
-                for (int k = 0; k < numbersOfNeurons; k++)
-                    bestBirdWeightHiddenIn[j][k] = neuronsWeightHiddenIn[numbersOfBird - 1][j][k];
-
-            for(int i = 0; i<(numbersOfNeurons+1);i++)
-                bestBirdWeightHiddenOut[i] = neuronsWeightHiddenOut[numbersOfBird - 1][i];
-
-        }
-
-    }
     void nextGeneration(int best, long bestScore){
 
         generation++;
@@ -209,31 +128,4 @@ public class Nns {
         return genValue;
     }
 
-
-    void check(){
-        System.out.print("\nneuronsWeightHidenOut\n");
-        for (float[] neurons: neuronsWeightHiddenOut
-        ) {
-            for (float element: neurons
-            ) {
-                System.out.print(element+" ");
-            }
-            System.out.print("\n");
-        }
-        System.out.print("\nneuronsWeightHidenIn\n");
-        for (float[][] birds: neuronsWeightHiddenIn
-        ) {
-            for (float[] neurons: birds
-            ) {
-                for (float element : neurons
-                ) {
-                    System.out.print(element+" ");
-                }
-                System.out.print("\n");
-            }
-
-        }
-
-
-    }
 }

@@ -10,23 +10,21 @@ public class Pipe extends Block{
     private double width;
     private double pipeImageTopHeight;
     private double pipeImageTopWight;
-    private Image image;
+    public static boolean hideHitbox=true;
 
-
-    public Pipe(double x, double y, Image pipeImage) {
-        super(x, y);
+    public Pipe(double x, double y, Image Image) {
+        super(x, y, Image);
         speed=1.0;
         holeSize=55.0;
         width=40.0;
         pipeImageTopHeight=20;
         pipeImageTopWight=3;
-        image=pipeImage;
     }
 
     @Override
     void Render(GraphicsContext context){
         context.setFill(Color.GREEN);
-        if(image.isError()) {
+        if(!hideHitbox) {
             context.fillRect(x, 0, width, y - holeSize);
             context.fillRect(x, y + holeSize, width, context.getCanvas().getHeight());
         }
@@ -50,5 +48,4 @@ public class Pipe extends Block{
     public double getWidth(){
         return width;
     }
-
 }

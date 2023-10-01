@@ -14,11 +14,11 @@ public class Bird extends Block{
     public long score;
     public static int radius;
     public static int scaleImage;
+    public static boolean hideHitbox=true;
     private boolean isDead;
-    private Image image;
 
     public Bird(double x, double y, Image image) {
-        super(x, y);
+        super(x, y,image);
         acceleration = 0.1;
         speed = 0;
         maxSpeed=5.8;
@@ -28,7 +28,6 @@ public class Bird extends Block{
         scaleImage=3;
         isDead = false;
         score = 0;
-        this.image=image;
     }
 
     public void Tap (){
@@ -43,19 +42,13 @@ public class Bird extends Block{
             return;
         }
 
-//        System.out.print(image.isError());
-//        context.drawImage(image,x-radius,y-radius);
-
-        if(image.isError()){
+        if(!hideHitbox){
             context.setFill(Color.YELLOW);
-            context.fillOval(x-radius, y-radius, radius*2, radius*2);
+            context.fillRect(x-radius,y-radius,2*radius,2*radius);
         }
         else {
-//            drawRotatedImage(context,image,headAngle,x-(scaleImage*radius/2) ,y-(scaleImage*radius/2), image.getWidth(), image.getHeight() );
             drawRotatedImage(context,image,headAngle,x-(scaleImage*radius/2) ,y-(scaleImage*radius/2), radius*scaleImage, radius*scaleImage );
         }
-//        context.setFont(Font.font(25));
-//        context.fillText(String.valueOf("Score: " + score), 30,30);
     }
 
     void UpdateState(Pipe pipe){

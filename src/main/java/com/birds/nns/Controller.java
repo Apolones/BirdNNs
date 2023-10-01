@@ -1,14 +1,7 @@
 package com.birds.nns;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -16,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
@@ -23,34 +17,29 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
-import javax.imageio.ImageIO;
-
 public class Controller {
 
     ArrayList<Pipe> pipeBlock = new ArrayList<>();
     ArrayList<Bird> birdBlock = new ArrayList<>();
-    private Nns nns = new Nns();
+    private final Nns nns = new Nns();
     @FXML
     private Button jump;
-    @FXML
-    private Button reset;
     @FXML
     private Slider speedSlider;
     @FXML
     private ToggleButton manualPlay;
     @FXML
+    private CheckBox hideHitbox;
+    @FXML
     private Canvas mainCanvas;
+    private Block background;
     Timeline timeline;
 
     Image birdImage;
     Image pipeImage;
+//    Image background;
     private long score=0;
     private long maxScore=0;
-    @FXML
-    void JumpBird(ActionEvent event) {
-        Bird bird = (Bird) birdBlock.get(0);
-        bird.Tap();
-    }
 
     @FXML
     void initialize() {
@@ -62,30 +51,11 @@ public class Controller {
         timeline.play();
         loadImage();
         initBlocks();
-        //test func
-//       nns.check();
-    }
-
-    private void loadImage() {
-        try {
-            birdImage = new Image(new FileInputStream("src/main/resources/com/birds/nns/bird_new.png"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            pipeImage = new Image(new FileInputStream("src/main/resources/com/birds/nns/pipe.png"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        //       pipeImage = new Image(getClass().getResourceAsStream("src/main/resources/com/birds/nns/bird.png"));
     }
 
     private void initBlocks() {
         if(manualPlay.isSelected())generateBirds(1);
         else generateBirds(nns.numbersOfBird);
-
-        Pipe pipe = new Pipe(mainCanvas.getWidth()-150, 250, pipeImage);
-        pipeBlock.add(pipe);
     }
 
     private void onTimeTick(ActionEvent actionEvent) {
@@ -95,8 +65,8 @@ public class Controller {
 
     private void Render() {
         GraphicsContext graphicsContext2D = mainCanvas.getGraphicsContext2D();
-        graphicsContext2D.setFill(Color.BLUE);
-        graphicsContext2D.fillRect(0,0, mainCanvas.getWidth(), mainCanvas.getHeight());
+
+        drawBackground(graphicsContext2D);
 
         for (Pipe block : pipeBlock) {
             block.Render(graphicsContext2D);
@@ -105,25 +75,21 @@ public class Controller {
         for (Bird block : birdBlock) {
             block.Render(graphicsContext2D);
         }
-        graphicsContext2D.setFill(Color.YELLOW);
+        graphicsContext2D.setFill(Color.DARKRED);
         graphicsContext2D.setFont(Font.font(15));
-        graphicsContext2D.fillText(String.valueOf("Generation: "+nns.generation), 350,20);
-        graphicsContext2D.fillText(String.valueOf("Maximum score: " + maxScore/100), 350,40);
+        graphicsContext2D.fillText("Generation: "+nns.generation, 350,20);
+        graphicsContext2D.fillText("Maximum score: " + maxScore/100, 350,40);
 
         graphicsContext2D.setFont(Font.font(25));
-        graphicsContext2D.fillText(String.valueOf("Score: " + score/100), 30,30);
+        graphicsContext2D.fillText("Score: " + score/100, 30,30);
+
     }
 
     private void UpdateState() {
-        if(manualPlay.isFocused() && manualPlay.isSelected()){
-            nns.generation=0;
-            nns.bestScore=0;
-            resetGame();
-        }
+        setUserSettings();
         generatePipes();
         score++;
-        timeline.setRate(speedSlider.getValue());
-        
+
         for (Pipe pipe : pipeBlock) {
             pipe.UpdateState();
         }
@@ -134,7 +100,7 @@ public class Controller {
                     pipeBlock.get(0).x-birdBlock.get(i).x-Bird.radius,                                                      //distance to hole on X
                     birdBlock.get(i).y-(pipeBlock.get(0).y-pipeBlock.get(0).getHole())-Bird.radius,                                 //distance to hole on y upper
                     birdBlock.get(i).y-(pipeBlock.get(0).y+pipeBlock.get(0).getHole())+Bird.radius,                                 //distance to hole on y bottom
-                    birdBlock.get(i).getSpeed());                                                                       //bird speed
+                    birdBlock.get(i).getSpeed());                                                                                   //bird speed
             if(!manualPlay.isSelected() && nns.isJump(i))birdBlock.get(i).Tap();
         }
 
@@ -142,6 +108,25 @@ public class Controller {
         if((pipe.x+ pipe.getWidth())<=0)pipeBlock.remove(0);
 
         areBirdsDead();
+    }
+
+    private void loadImage() {
+        background = new Block(0,0,new Image("com/birds/nns/background.png"));
+        birdImage = new Image("com/birds/nns/bird.png");
+        pipeImage = new Image("com/birds/nns/pipe.png");
+    }
+
+    private void setUserSettings() {
+        timeline.setRate(speedSlider.getValue());
+        Bird.hideHitbox=!hideHitbox.isSelected();
+        Pipe.hideHitbox=!hideHitbox.isSelected();
+
+        if(manualPlay.isFocused() && manualPlay.isSelected()){
+            nns.generation=0;
+            nns.bestScore=0;
+        }
+        jump.setVisible(manualPlay.isSelected());
+
     }
 
     private void areBirdsDead() {
@@ -166,12 +151,14 @@ public class Controller {
     }
 
     private void generatePipes() {
-        Pipe pipeLast = pipeBlock.get(pipeBlock.size()-1);
-        if (pipeLast.x>300)return;
-        int y = ThreadLocalRandom.current().nextInt(100,300);
-
+        if (!pipeBlock.isEmpty()) {
+            Pipe pipeLast = pipeBlock.get(pipeBlock.size() - 1);
+            if (pipeLast.x > (mainCanvas.getWidth() / 1.7)) return;
+        }
+        int y = ThreadLocalRandom.current().nextInt(100, (int) mainCanvas.getHeight() - 100);
         Pipe pipe = new Pipe(mainCanvas.getWidth(),y, pipeImage);
         pipeBlock.add(pipe);
+
     }
 
     public void generateBirds(int number){
@@ -190,4 +177,17 @@ public class Controller {
 
     }
 
+    private void drawBackground(GraphicsContext graphicsContext2D) {
+        background.x-=0.1;
+        if(background.x<=-mainCanvas.getWidth())background.x=0;
+        graphicsContext2D.drawImage( background.image, background.x, background.y, mainCanvas.getWidth(), mainCanvas.getHeight());
+        graphicsContext2D.drawImage( background.image,mainCanvas.getWidth()+ background.x, background.y, mainCanvas.getWidth(), mainCanvas.getHeight());
+    }
+
+    @FXML
+    void JumpBird() {
+        if(birdBlock.size()>1)resetGame();
+        Bird bird = birdBlock.get(0);
+        bird.Tap();
+    }
 }
