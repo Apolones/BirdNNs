@@ -4,25 +4,20 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Nns {
     public final int numbersOfBird = 50;
-    public final int numbersOfNeurons = 6;
-    public final int numbersOfParameters = 4;
+    private final int numbersOfNeurons = 6;
+    private final int numbersOfParameters = 4;
 
     public int generation;
     public long bestScore;
 
-    private float[][] neuronsIn = new float[numbersOfBird][numbersOfParameters];                         //1-number bird 2-data bird ( 0-hight 1-hole 2-accseleration 3-speed)
-    private float[][][] neuronsWeightHiddenIn = new float[numbersOfBird][numbersOfParameters +1][numbersOfNeurons];         //1-number birds 2 weight neuronsIn 3 valueHidenNeurons
-    private float[][] neuronsValueHidden = new float[numbersOfBird][numbersOfNeurons];
-    private float[][] neuronsWeightHiddenOut = new float[numbersOfBird][numbersOfNeurons+1];             //1-number birds 2 weight neuronsOut
-    private float[][] bestBirdWeightHiddenIn = new float[numbersOfParameters +1][numbersOfNeurons];
-    private float[] bestBirdWeightHiddenOut = new float[numbersOfNeurons+1];
-    private float[][] deltaBirdWeightHiddenIn = new float[numbersOfParameters +1][numbersOfNeurons];
-    private float[] deltaBirdWeightHiddenOut = new float[numbersOfNeurons+1];
+    private final float[][] neuronsIn = new float[numbersOfBird][numbersOfParameters];                                         //1-number bird 2-data bird ( 0-distanceTopPipeY 1-distancePipeX 2-distanceBotPipeY 3-speed)
+    private final float[][][] neuronsWeightHiddenIn = new float[numbersOfBird][numbersOfParameters +1][numbersOfNeurons];
+    private final float[][] neuronsValueHidden = new float[numbersOfBird][numbersOfNeurons];
+    private final float[][] neuronsWeightHiddenOut = new float[numbersOfBird][numbersOfNeurons+1];
+    private final float[][] bestBirdWeightHiddenIn = new float[numbersOfParameters +1][numbersOfNeurons];
+    private final float[] bestBirdWeightHiddenOut = new float[numbersOfNeurons+1];
 
     public Nns() {
-
-        generation=1;
-
         for(int i = 0; i<numbersOfBird;i++)
             for(int j = 0; j<(numbersOfParameters +1); j++)
                 for (int k =0; k<numbersOfNeurons;k++)
@@ -39,12 +34,12 @@ public class Nns {
 
         for(int j = 0; j<(numbersOfNeurons+1); j++)
             bestBirdWeightHiddenOut[j]=ThreadLocalRandom.current().nextFloat()*2.0f-1.0f;
-
+        generation=1;
         bestScore=0;
-
     }
 
-    public void updateValueBird(int numberBird, double distanceX, double distanceTopY, double distanceBotY, double speed ) {           //Do normalization !!!!
+    public void updateValueBird(int numberBird, double distanceX, double distanceTopY, double distanceBotY, double speed ) {
+        //all values need be normalized
         neuronsIn[numberBird][0]= (float) (distanceTopY/200.0f-1.0f);
         neuronsIn[numberBird][1]=(float) (distanceX/200.0f-1.0f);
         neuronsIn[numberBird][2]=(float) (distanceBotY/200.0f-1.0f);
@@ -67,22 +62,18 @@ public class Nns {
             exitValue+= neuronsValueHidden[numberBird][i]* neuronsWeightHiddenOut[numberBird][i];
         }
         exitValue+= neuronsWeightHiddenOut[numberBird][numbersOfNeurons];
-        if (exitValue>0.3f)return true;
-
-        return false;
+        return exitValue > 0.5f;
     }
 
     void nextGeneration(int best, long bestScore){
 
         generation++;
-
         for (int j = 0; j < (numbersOfParameters + 1); j++) {
             for (int k = 0; k < numbersOfNeurons; k++) {
                 neuronsWeightHiddenIn[0][j][k] = bestBirdWeightHiddenIn[j][k];
                 neuronsWeightHiddenIn[numbersOfBird-1][j][k] = neuronsWeightHiddenIn[best][j][k];
             }
         }
-
 
         for(int i = 1; i<(numbersOfBird-1);i++) {
             for (int j = 0; j < (numbersOfParameters + 1); j++) {
@@ -120,12 +111,13 @@ public class Nns {
             }
 
         }
-
     }
 
     private float mutateGen(float genValue) {
         if(ThreadLocalRandom.current().nextFloat()<0.1f) return (ThreadLocalRandom.current().nextFloat()*2.0f-1.0f);
         return genValue;
     }
+
+
 
 }

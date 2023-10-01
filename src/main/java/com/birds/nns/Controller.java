@@ -33,11 +33,9 @@ public class Controller {
     @FXML
     private Canvas mainCanvas;
     private Block background;
-    Timeline timeline;
-
-    Image birdImage;
-    Image pipeImage;
-//    Image background;
+    private Timeline timeline;
+    private Image birdImage;
+    private Image pipeImage;
     private long score=0;
     private long maxScore=0;
 
@@ -98,16 +96,19 @@ public class Controller {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
             nns.updateValueBird(i,
                     pipeBlock.get(0).x-birdBlock.get(i).x-Bird.radius,                                                      //distance to hole on X
-                    birdBlock.get(i).y-(pipeBlock.get(0).y-pipeBlock.get(0).getHole())-Bird.radius,                                 //distance to hole on y upper
-                    birdBlock.get(i).y-(pipeBlock.get(0).y+pipeBlock.get(0).getHole())+Bird.radius,                                 //distance to hole on y bottom
+                    birdBlock.get(i).y-(pipeBlock.get(0).y-Pipe.holeSize)-Bird.radius,                                 //distance to hole on y upper
+                    birdBlock.get(i).y-(pipeBlock.get(0).y+Pipe.holeSize)+Bird.radius,                                 //distance to hole on y bottom
                     birdBlock.get(i).getSpeed());                                                                                   //bird speed
             if(!manualPlay.isSelected() && nns.isJump(i))birdBlock.get(i).Tap();
         }
 
-        Pipe pipe = pipeBlock.get(0);
-        if((pipe.x+ pipe.getWidth())<=0)pipeBlock.remove(0);
+        removePassedPipe();
+        isNextGen();
+    }
 
-        areBirdsDead();
+    private void removePassedPipe() {
+        Pipe pipe = pipeBlock.get(0);
+        if((pipe.x+ Pipe.width)<=0)pipeBlock.remove(0);
     }
 
     private void loadImage() {
@@ -129,12 +130,12 @@ public class Controller {
 
     }
 
-    private void areBirdsDead() {
+    private void isNextGen() {
         for (Bird bird: birdBlock) {
             if(!bird.isDead()) return;
         }
         int best=choiceBestBird();
-        nns.nextGeneration(best,birdBlock.get(best).score);
+        nns.nextGeneration(best,birdBlock.get(best).getScore());
         resetGame();
     }
 
@@ -142,8 +143,8 @@ public class Controller {
         int best=0;
         long score=0;
         for (int i = 0; i<birdBlock.size(); i++) {
-            if(birdBlock.get(i).score>score){
-                score=birdBlock.get(i).score;
+            if(birdBlock.get(i).getScore()>score){
+                score=birdBlock.get(i).getScore();
                 best=i;
             }
         }
@@ -174,18 +175,17 @@ public class Controller {
         if(score>maxScore)maxScore=score;
         score=0;
         initBlocks();
-
     }
 
     private void drawBackground(GraphicsContext graphicsContext2D) {
-        background.x-=0.1;
+        background.x-=Pipe.speed/10;
         if(background.x<=-mainCanvas.getWidth())background.x=0;
         graphicsContext2D.drawImage( background.image, background.x, background.y, mainCanvas.getWidth(), mainCanvas.getHeight());
         graphicsContext2D.drawImage( background.image,mainCanvas.getWidth()+ background.x, background.y, mainCanvas.getWidth(), mainCanvas.getHeight());
     }
 
     @FXML
-    void JumpBird() {
+    void jumpBird() {
         if(birdBlock.size()>1)resetGame();
         Bird bird = birdBlock.get(0);
         bird.Tap();

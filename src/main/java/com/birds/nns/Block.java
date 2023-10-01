@@ -3,7 +3,6 @@ package com.birds.nns;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-import java.awt.*;
 
 public class Block {
     double x;

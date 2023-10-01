@@ -6,28 +6,24 @@ import javafx.scene.image.Image;
 import javafx.scene.transform.Rotate;
 
 public class Bird extends Block{
-    private double acceleration;
-    private double speed;
-    private double maxSpeed;
-    private double headAngle;
-    private double tapSpeed;
-    public long score;
-    public static int radius;
-    public static int scaleImage;
+    private static final double acceleration = 0.1;
+    private static final  double maxSpeed = 5.8;
+    private static final  double tapSpeed = 3.5;
+
+    public static final  int radius = 15;
+    public static final  int scaleImage = 3;
     public static boolean hideHitbox=true;
+    private double speed;
+    private double headAngle;
+    private long score;
     private boolean isDead;
 
     public Bird(double x, double y, Image image) {
         super(x, y,image);
-        acceleration = 0.1;
         speed = 0;
-        maxSpeed=5.8;
         headAngle = -15;
-        tapSpeed = 3.5;
-        radius=15;
-        scaleImage=3;
-        isDead = false;
         score = 0;
+        isDead = false;
     }
 
     public void Tap (){
@@ -47,14 +43,14 @@ public class Bird extends Block{
             context.fillRect(x-radius,y-radius,2*radius,2*radius);
         }
         else {
-            drawRotatedImage(context,image,headAngle,x-(scaleImage*radius/2) ,y-(scaleImage*radius/2), radius*scaleImage, radius*scaleImage );
+            drawRotatedImage(context,image,headAngle,x-(scaleImage*radius/2d) ,y-(scaleImage*radius/2d), radius*scaleImage, radius*scaleImage );
         }
     }
 
     void UpdateState(Pipe pipe){
         if (pipe.x<(x+radius))
-            if (pipe.x+pipe.getWidth()>(x-radius))
-                if ((y+radius)>(pipe.y+pipe.getHole()) || (y-radius)<(pipe.y-pipe.getHole())) {
+            if (pipe.x+Pipe.width>(x-radius))
+                if ((y+radius)>(pipe.y+Pipe.holeSize) || (y-radius)<(pipe.y-Pipe.holeSize)) {
                     birdDead();
                     return;
                 }
@@ -75,6 +71,7 @@ public class Bird extends Block{
     public boolean isDead() {
         return isDead;
     }
+    public long getScore(){return score;}
     public static void drawRotatedImage(GraphicsContext context, Image image,
                                         double angle, double x, double y, double width,
                                         double height) {
