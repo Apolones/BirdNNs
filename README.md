@@ -9,3 +9,5 @@
 ## Game
 Graphics: JavaFX
 <br /> ![birds](https://github.com/Apolones/BirdNNs/assets/85924175/0c4c68eb-9763-4973-bb18-7d37fce373e7)
+
+[![Maven Package](https://github.com/Apolones/BirdNNs/actions/workflows/maven-publish.yml/badge.svg?branch=NNsTest&event=issues)](https://github.com/Apolones/BirdNNs/actions/workflows/maven-publish.yml)
