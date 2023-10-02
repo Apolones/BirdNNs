@@ -8,6 +8,7 @@ public class Block {
     double x;
     double y;
     Image image;
+    static boolean hideHitbox=true;
 
     public Block(double x, double y, Image image) {
         this.x = x;

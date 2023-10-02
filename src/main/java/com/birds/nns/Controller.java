@@ -63,9 +63,7 @@ public class Controller {
 
     private void Render() {
         GraphicsContext graphicsContext2D = mainCanvas.getGraphicsContext2D();
-
         drawBackground(graphicsContext2D);
-
         for (Pipe block : pipeBlock) {
             block.Render(graphicsContext2D);
         }
@@ -73,14 +71,8 @@ public class Controller {
         for (Bird block : birdBlock) {
             block.Render(graphicsContext2D);
         }
-        graphicsContext2D.setFill(Color.DARKRED);
-        graphicsContext2D.setFont(Font.font(15));
-        graphicsContext2D.fillText("Generation: "+nns.generation, 350,20);
-        graphicsContext2D.fillText("Maximum score: " + maxScore/100, 350,40);
 
-        graphicsContext2D.setFont(Font.font(25));
-        graphicsContext2D.fillText("Score: " + score/100, 30,30);
-
+        RenderUI(graphicsContext2D);
     }
 
     private void UpdateState() {
@@ -95,9 +87,9 @@ public class Controller {
         for (int i = 0; i<birdBlock.size(); i++) {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
             nns.updateValueBird(i,
-                    pipeBlock.get(0).x-birdBlock.get(i).x-Bird.radius,                                                      //distance to hole on X
-                    birdBlock.get(i).y-(pipeBlock.get(0).y-Pipe.holeSize)-Bird.radius,                                 //distance to hole on y upper
-                    birdBlock.get(i).y-(pipeBlock.get(0).y+Pipe.holeSize)+Bird.radius,                                 //distance to hole on y bottom
+                    pipeBlock.get(0).x-birdBlock.get(i).x-Bird.getRadius(),                                                      //distance to hole on X
+                    birdBlock.get(i).y-(pipeBlock.get(0).y-Pipe.getHoleSize())-Bird.getRadius(),                                 //distance to hole on y upper
+                    birdBlock.get(i).y-(pipeBlock.get(0).y+Pipe.getHoleSize())+Bird.getRadius(),                                 //distance to hole on y bottom
                     birdBlock.get(i).getSpeed());                                                                                   //bird speed
             if(!manualPlay.isSelected() && nns.isJump(i))birdBlock.get(i).Tap();
         }
@@ -106,9 +98,20 @@ public class Controller {
         isNextGen();
     }
 
+    private void RenderUI(GraphicsContext graphicsContext2D) {
+        graphicsContext2D.setFill(Color.DARKRED);
+        graphicsContext2D.setFont(Font.font(15));
+        graphicsContext2D.fillText("Generation: "+nns.generation, 350,20);
+        graphicsContext2D.fillText("Maximum score: " + maxScore/100, 350,40);
+
+        graphicsContext2D.setFont(Font.font(25));
+        graphicsContext2D.fillText("Score: " + score/100, 30,30);
+
+    }
+
     private void removePassedPipe() {
         Pipe pipe = pipeBlock.get(0);
-        if((pipe.x+ Pipe.width)<=0)pipeBlock.remove(0);
+        if((pipe.x+ Pipe.getWidth())<=0)pipeBlock.remove(0);
     }
 
     private void loadImage() {
@@ -119,8 +122,8 @@ public class Controller {
 
     private void setUserSettings() {
         timeline.setRate(speedSlider.getValue());
-        Bird.hideHitbox=!hideHitbox.isSelected();
-        Pipe.hideHitbox=!hideHitbox.isSelected();
+        Block.hideHitbox=!hideHitbox.isSelected();
+
 
         if(manualPlay.isFocused() && manualPlay.isSelected()){
             nns.generation=0;
@@ -164,7 +167,7 @@ public class Controller {
 
     public void generateBirds(int number){
         for(int i = 0; i < number; i++){
-            Bird bird = new Bird(Bird.scaleImage*Bird.radius, mainCanvas.getHeight()/2 , birdImage);
+            Bird bird = new Bird(mainCanvas.getHeight()/2 , birdImage);
             birdBlock.add(bird);
         }
     }
@@ -178,7 +181,7 @@ public class Controller {
     }
 
     private void drawBackground(GraphicsContext graphicsContext2D) {
-        background.x-=Pipe.speed/10;
+        background.x-=Pipe.getSpeed()/10;
         if(background.x<=-mainCanvas.getWidth())background.x=0;
         graphicsContext2D.drawImage( background.image, background.x, background.y, mainCanvas.getWidth(), mainCanvas.getHeight());
         graphicsContext2D.drawImage( background.image,mainCanvas.getWidth()+ background.x, background.y, mainCanvas.getWidth(), mainCanvas.getHeight());

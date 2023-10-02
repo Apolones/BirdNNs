@@ -9,17 +9,16 @@ public class Bird extends Block{
     private static final double acceleration = 0.1;
     private static final  double maxSpeed = 5.8;
     private static final  double tapSpeed = 3.5;
+    private static final  int radius = 15;
+    private static final  int scaleImage = 3;
 
-    public static final  int radius = 15;
-    public static final  int scaleImage = 3;
-    public static boolean hideHitbox=true;
     private double speed;
     private double headAngle;
     private long score;
     private boolean isDead;
 
-    public Bird(double x, double y, Image image) {
-        super(x, y,image);
+    public Bird(double y, Image image) {
+        super(scaleImage*radius, y,image);
         speed = 0;
         headAngle = -15;
         score = 0;
@@ -49,8 +48,8 @@ public class Bird extends Block{
 
     void UpdateState(Pipe pipe){
         if (pipe.x<(x+radius))
-            if (pipe.x+Pipe.width>(x-radius))
-                if ((y+radius)>(pipe.y+Pipe.holeSize) || (y-radius)<(pipe.y-Pipe.holeSize)) {
+            if (pipe.x+Pipe.getWidth()>(x-radius))
+                if ((y+radius)>(pipe.y+Pipe.getHoleSize()) || (y-radius)<(pipe.y-Pipe.getHoleSize())) {
                     birdDead();
                     return;
                 }
@@ -91,5 +90,7 @@ public class Bird extends Block{
         if(speed>maxSpeed/2 && headAngle<75)headAngle+=3;
         if(speed<maxSpeed/2 && headAngle>-15)headAngle-=3;
     }
+
+    public static int getRadius(){return radius;}
 
 }

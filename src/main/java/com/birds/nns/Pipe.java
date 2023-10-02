@@ -5,12 +5,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.image.Image;
 
 public class Pipe extends Block{
-    public static final double speed = 1.0;
-    public static final double holeSize = 55.0;
-    public static final double width = 40.0;
+    private static final double speed = 1.0;
+    private static final double holeSize = 55.0;
+    private static final double width = 40.0;
     private static final double pipeImageTopHeight = 20;
     private static final double pipeImageTopWight = 3;
-    public static boolean hideHitbox=true;
 
     public Pipe(double x, double y, Image Image) {
         super(x, y, Image);
@@ -35,5 +34,8 @@ public class Pipe extends Block{
     void UpdateState(){
         x-=speed;
     }
+    public static double getSpeed(){return speed;}
+    public static double getHoleSize(){return holeSize;}
+    public static double getWidth(){return width;}
 
 }
