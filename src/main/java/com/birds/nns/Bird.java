@@ -31,11 +31,10 @@ public class Bird extends Block{
 
 //    @Override
     void Render(GraphicsContext context){
+        if (isDead) return;
         updateHeadAngle();
-        if (y<=0 || y>=context.getCanvas().getHeight()) birdDead();
-        if (isDead) {
-            return;
-        }
+        if (y<=0|| y>=context.getCanvas().getHeight()) birdDead();
+
 
         if(!hideHitbox){
             context.setFill(Color.YELLOW);
@@ -47,6 +46,7 @@ public class Bird extends Block{
     }
 
     void UpdateState(Pipe pipe){
+        if (isDead) return;
         if (pipe.x<(x+radius))
             if (pipe.x+Pipe.getWidth()>(x-radius))
                 if ((y+radius)>(pipe.y+Pipe.getHoleSize()) || (y-radius)<(pipe.y-Pipe.getHoleSize())) {
@@ -55,22 +55,13 @@ public class Bird extends Block{
                 }
         if(speed<maxSpeed) speed += acceleration;
         y += speed;
-
-        if (!isDead) score++;
+        score++;
     }
 
     void birdDead(){
         isDead=true;
     }
 
-    public double getSpeed() {
-        return speed;
-    }
-
-    public boolean isDead() {
-        return isDead;
-    }
-    public long getScore(){return score;}
     public static void drawRotatedImage(GraphicsContext context, Image image,
                                         double angle, double x, double y, double width,
                                         double height) {
@@ -92,5 +83,9 @@ public class Bird extends Block{
     }
 
     public static int getRadius(){return radius;}
+    public static double getMaxSpeed(){return maxSpeed;}
+    public double getSpeed() {return speed;}
+    public boolean isDead() {return isDead;}
+    public long getScore(){return score;}
 
 }
