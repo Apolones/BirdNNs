@@ -7,4 +7,5 @@
 <br /> population 15
 <br /> ![ANN](https://github.com/Apolones/BirdNNs/assets/85924175/e51f7b2a-ef08-42d4-8512-7bcbf6d6aabd)
 ## Game
+Graphics: JavaFX
 <br /> ![birds](https://github.com/Apolones/BirdNNs/assets/85924175/0c4c68eb-9763-4973-bb18-7d37fce373e7)
