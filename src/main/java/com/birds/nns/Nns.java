@@ -3,7 +3,7 @@ package com.birds.nns;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Nns {
-    public final int numbersOfBird = 50;
+    public final int numbersOfBird = 15;
     private final int numbersOfNeurons = 6;
     private final int numbersOfParameters = 4;
 
@@ -18,6 +18,7 @@ public class Nns {
     private final float[] bestBirdWeightHiddenOut = new float[numbersOfNeurons+1];
 
     public Nns() {
+        //generate random Weight neurons (-1,1)
         for(int i = 0; i<numbersOfBird;i++)
             for(int j = 0; j<(numbersOfParameters +1); j++)
                 for (int k =0; k<numbersOfNeurons;k++)
@@ -39,11 +40,11 @@ public class Nns {
     }
 
     public void updateValueBird(int numberBird, double distanceX, double distanceTopY, double distanceBotY, double speed ) {
-        //all values need be normalized
-        neuronsIn[numberBird][0]= (float) (distanceTopY/200.0f-1.0f);
-        neuronsIn[numberBird][1]=(float) (distanceX/200.0f-1.0f);
-        neuronsIn[numberBird][2]=(float) (distanceBotY/200.0f-1.0f);
-        neuronsIn[numberBird][3]= (float) (speed/5.0f-1.0f);
+        //all values must be normalized
+        neuronsIn[numberBird][0]= (float) distanceX;
+        neuronsIn[numberBird][1]= (float) distanceTopY;
+        neuronsIn[numberBird][2]= (float) distanceBotY;
+        neuronsIn[numberBird][3]= (float) speed;
     }
 
     public boolean isJump(int numberBird){
@@ -53,8 +54,8 @@ public class Nns {
             for(int j = 0; j< numbersOfParameters; j++){
                 neuronsValueHidden[numberBird][i]+=neuronsIn[numberBird][j]* neuronsWeightHiddenIn[numberBird][j][i];
             }
-            neuronsValueHidden[numberBird][i]+= neuronsWeightHiddenIn[numberBird][numbersOfParameters][i];
-            if(neuronsValueHidden[numberBird][i]<0) neuronsValueHidden[numberBird][i]=0;
+            neuronsValueHidden[numberBird][i]+=neuronsWeightHiddenIn[numberBird][numbersOfParameters][i];
+            neuronsValueHidden[numberBird][i]= activationFunction(neuronsValueHidden[numberBird][i]);
         }
         float exitValue=0.0f;
 
@@ -62,7 +63,17 @@ public class Nns {
             exitValue+= neuronsValueHidden[numberBird][i]* neuronsWeightHiddenOut[numberBird][i];
         }
         exitValue+= neuronsWeightHiddenOut[numberBird][numbersOfNeurons];
+        exitValue=activationFunction(exitValue);
         return exitValue > 0.5f;
+    }
+
+    private float activationFunction(float value) {
+
+        //Sigmoid
+        return (float) (1/(1+Math.exp(-value)));
+
+        //ReLU
+        //if(value>0)return value; else return 0;
     }
 
     void nextGeneration(int best, long bestScore){

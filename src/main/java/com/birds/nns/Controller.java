@@ -87,10 +87,15 @@ public class Controller {
         for (int i = 0; i<birdBlock.size(); i++) {
             birdBlock.get(i).UpdateState(pipeBlock.get(0));
             nns.updateValueBird(i,
-                    pipeBlock.get(0).x-birdBlock.get(i).x-Bird.getRadius(),                                                      //distance to hole on X
-                    birdBlock.get(i).y-(pipeBlock.get(0).y-Pipe.getHoleSize())-Bird.getRadius(),                                 //distance to hole on y upper
-                    birdBlock.get(i).y-(pipeBlock.get(0).y+Pipe.getHoleSize())+Bird.getRadius(),                                 //distance to hole on y bottom
-                    birdBlock.get(i).getSpeed());                                                                                   //bird speed
+                    pipeBlock.get(0).x-birdBlock.get(i).x-Bird.getRadius()                                      //distance to hole on X (normalized)
+                    /mainCanvas.getWidth(),
+                    birdBlock.get(i).y-(pipeBlock.get(0).y-Pipe.getHoleSize())-Bird.getRadius()               //distance to hole on y upper (normalized)
+                    /mainCanvas.getHeight(),
+                    birdBlock.get(i).y-(pipeBlock.get(0).y+Pipe.getHoleSize())+Bird.getRadius()               //distance to hole on y bottom (normalized)
+                    /mainCanvas.getHeight(),
+                    birdBlock.get(i).getSpeed()                                                                   //bird speed (normalized)
+                    /Bird.getMaxSpeed()
+                    );
             if(!manualPlay.isSelected() && nns.isJump(i))birdBlock.get(i).Tap();
         }
 
@@ -150,6 +155,11 @@ public class Controller {
                 score=birdBlock.get(i).getScore();
                 best=i;
             }
+//            if(birdBlock.get(i).getScore() == score)
+//                if(Math.abs(birdBlock.get(i).y-pipeBlock.get(0).y)<Math.abs(birdBlock.get(best).y-pipeBlock.get(0).y)){
+//                    score=birdBlock.get(i).getScore();
+//                    best=i;
+//                }
         }
         return best;
     }
