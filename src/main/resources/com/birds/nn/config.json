@@ -1,0 +1,36 @@
+{
+  "neuralNetwork": {
+    "populationSize" : 20,
+    "inputSize": 4,
+    "hiddenLayers": [
+      5
+    ],
+    "outputSize": 1,
+    "mutationRate": 0.1,
+    "eliteCounter": 4
+  },
+  "game": {
+    "birdConfig": {
+      "startPositionX" : 100,
+      "startPositionY" : 100,
+      "acceleration" : 0.1,
+      "maxSpeed" : 5.8,
+      "tapSpeed" : 3.5,
+      "radius" : 15,
+      "scaleImage" : 3
+    },
+    "pipeConfig" : {
+      "speed" : 1.0,
+      "holeSize" : 55.0,
+      "width" : 40.0,
+      "imageTopHeight" : 20,
+      "imageTopWight" : 3
+    }
+
+  },
+  "resources": {
+    "backgroundImage": "com/birds/nn/background.png",
+    "birdImage": "com/birds/nn/bird.png",
+    "pipeImage": "com/birds/nn/pipe.png"
+  }
+}
