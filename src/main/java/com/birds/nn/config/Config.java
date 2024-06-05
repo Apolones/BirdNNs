@@ -17,8 +17,10 @@ public class Config {
     }
 
     public static class GameConfig {
+        public String gameTitle;
         public BirdConfig birdConfig;
         public PipeConfig pipeConfig;
+        public BackgroundConfig backgroundConfig;
 
         public static class BirdConfig {
             public int startPositionX;
@@ -37,11 +39,16 @@ public class Config {
             public double imageTopHeight;
             public double imageTopWight;
         }
+
+        public static class BackgroundConfig {
+            public double speed;
+        }
     }
 
     public static class ResourcesConfig {
         public String backgroundImage;
         public String birdImage;
         public String pipeImage;
+        public String iconImage;
     }
 }

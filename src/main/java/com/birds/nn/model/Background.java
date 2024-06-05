@@ -1,32 +1,21 @@
 package com.birds.nn.model;
 
 import com.birds.nn.view.MainApplication;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 
 public class Background extends Block {
-    private static final Image img;
+
+    private static final double speed;
 
     static {
-        img = new Image(MainApplication.getConfig().resources.backgroundImage);
+        speed = MainApplication.getConfig().game.backgroundConfig.speed;
     }
 
-    private final double width;
-    private final double height;
-
-    public Background(double width, double height){
-        super(0, 0, img);
-        this.width = width;
-        this.height = height;
+    public Background() {
+        super(0, 0);
     }
 
-    public void Render(GraphicsContext context) {
-        context.drawImage(image, x, y, width, height);
-        context.drawImage(image, width + x, y, width, height);
-    }
-
-    public void UpdateState(){
-        x -= Pipe.getSpeed() / 10;
+    public void updateState(double width) {
+        x -= speed;
         if (x <= -width)
             x = 0;
     }

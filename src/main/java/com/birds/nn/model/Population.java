@@ -1,10 +1,12 @@
 package com.birds.nn.model;
 
-import com.birds.nn.neuralnetwork.Layer;
-import com.birds.nn.neuralnetwork.NeuralNetwork;
-import com.birds.nn.neuralnetwork.Neuron;
+import com.birds.nn.model.neuralnetwork.Layer;
+import com.birds.nn.model.neuralnetwork.NeuralNetwork;
+import com.birds.nn.model.neuralnetwork.Neuron;
+import com.birds.nn.view.MainApplication;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Population {
     private final int populationSize;
@@ -13,7 +15,6 @@ public class Population {
     private List<SmartBird> smartBirds;
     private SmartBird bestBird;
     private long bestScore = 0;
-    private int generation = 1;
 
     public Population(int populationSize, int numInputs, List<Integer> numHidden, int numOutputs) {
         this.populationSize = populationSize;
@@ -23,6 +24,13 @@ public class Population {
         smartBirds = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
             smartBirds.add(new SmartBird(new NeuralNetwork(inputs)));
+        }
+    }
+
+    public void updateState(PipeArray pipeArray, double maxX, double maxY) {
+        for (SmartBird smartBird : smartBirds) {
+            if (smartBird.isDead()) continue;
+            smartBird.updateState(pipeArray.getPipeArray(), maxX, maxY);
         }
     }
 
@@ -36,8 +44,9 @@ public class Population {
                 Neuron parent1Neuron = parent1Layer.getNeurons()[j];
                 Neuron parent2Neuron = parent2Layer.getNeurons()[j];
                 Neuron childNeuron = childLayer.getNeurons()[j];
+                boolean rnd = ThreadLocalRandom.current().nextDouble() > 0.5;
                 for (int k = 0; k < parent1Neuron.getWeights().length; k++) {
-                    if (Math.random() > 0.5) {
+                    if (rnd) {
                         childNeuron.getWeights()[k] = parent1Neuron.getWeights()[k];
                     } else {
                         childNeuron.getWeights()[k] = parent2Neuron.getWeights()[k];
@@ -49,12 +58,11 @@ public class Population {
     }
 
     public void mutate(SmartBird smartBird, double mutationRate) {
-        Random rand = new Random();
         for (Layer layer : smartBird.getNeuralNetwork().getLayers()) {
             for (Neuron neuron : layer.getNeurons()) {
                 for (int i = 0; i < neuron.getWeights().length; i++) {
-                    if (rand.nextDouble() < mutationRate) {
-                        neuron.getWeights()[i] = rand.nextDouble() * 2 - 1;
+                    if (ThreadLocalRandom.current().nextDouble() < mutationRate) {
+                        neuron.getWeights()[i] = ThreadLocalRandom.current().nextDouble(-1, 1);
                     }
                 }
             }
@@ -90,13 +98,15 @@ public class Population {
             mutate(child, mutationRate);
             newGeneration.add(child);
         }
-
-        generation++;
         smartBirds = newGeneration;
     }
 
-    public int getGeneration() {
-        return generation;
+    public Boolean isNextGen() {
+        for (SmartBird smartBird : smartBirds) {
+            if (!smartBird.isDead()) return false;
+        }
+        evolve(MainApplication.getConfig().neuralNetwork.mutationRate, MainApplication.getConfig().neuralNetwork.eliteCounter);
+        return true;
     }
 
     public List<SmartBird> getSmartBirds() {

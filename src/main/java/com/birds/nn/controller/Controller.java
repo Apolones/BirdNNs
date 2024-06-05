@@ -1,10 +1,7 @@
 package com.birds.nn.controller;
 
-import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-
 import com.birds.nn.model.*;
-import com.birds.nn.view.MainApplication;
+import com.birds.nn.view.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -13,93 +10,73 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 
-public class Controller {
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-    ArrayList<Pipe> pipeBlock = new ArrayList<>();
+public class Controller {
+    @FXML
+    private Canvas mainCanvas;
+    private Timeline timeline;
+    @FXML
+    private Slider speedSlider;
+    @FXML
+    private CheckBox hideHitbox;
+
+    private final Background background = new Background();
+    private final PipeArray pipeArray = new PipeArray();
     private final Population population = new Population(
             MainApplication.getConfig().neuralNetwork.populationSize,
             MainApplication.getConfig().neuralNetwork.inputSize,
             MainApplication.getConfig().neuralNetwork.hiddenLayers,
             MainApplication.getConfig().neuralNetwork.outputSize);
-    @FXML
-    private Slider speedSlider;
-    @FXML
-    private CheckBox hideHitbox;
-    @FXML
-    private Canvas mainCanvas;
-    private Background background;
-    private Timeline timeline;
-    private long score = 0;
-    private long maxScore = 0;
+    private final UI ui = new UI();
+
+    private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
 
     @FXML
     void initialize() {
-        timeline = new Timeline(new KeyFrame(
-                Duration.millis(40),
-                this::onTimeTick
-        ));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-        background = new Background(mainCanvas.getWidth(), mainCanvas.getHeight());
+        try {
+            timeline = new Timeline(new KeyFrame(
+                    Duration.millis(40),
+                    this::onTimeTick
+            ));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+            LOGGER.info("Game started");
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while starting the game", e);
+        }
     }
 
     private void onTimeTick(ActionEvent actionEvent) {
-        UpdateState();
-        Render();
+        updateState();
+        render();
     }
 
-    private void Render() {
-        GraphicsContext graphicsContext2D = mainCanvas.getGraphicsContext2D();
-        background.Render(mainCanvas.getGraphicsContext2D());
-        for (Pipe block : pipeBlock) {
-            block.Render(graphicsContext2D);
+    private void render() {
+        try {
+            GraphicsContext graphicsContext2D = mainCanvas.getGraphicsContext2D();
+            BackgroundRender.render(graphicsContext2D, background);
+            PipeArrayRender.render(graphicsContext2D, pipeArray);
+            PopulationRender.render(graphicsContext2D, population);
+            UIRender.render(graphicsContext2D, ui);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while rendering the game", e);
         }
-
-        for (SmartBird smartBird : population.getSmartBirds()) {
-            smartBird.Render(graphicsContext2D);
-        }
-
-        RenderUI(graphicsContext2D);
     }
 
-    private void UpdateState() {
-        setUserSettings();
-        generatePipes();
-        score++;
-
-        for (Pipe pipe : pipeBlock) {
-            pipe.UpdateState();
-        }
-
-        background.UpdateState();
-
-        for (int i = 0; i < population.getSmartBirds().size(); i++) {
-            population.getSmartBirds().get(i).UpdateState(pipeBlock);
-            if (population.getSmartBirds().get(i).isJump(pipeBlock, mainCanvas.getWidth(), mainCanvas.getHeight()))
-                population.getSmartBirds().get(i).Tap();
-        }
-        removePassedPipe();
-        isNextGen();
-    }
-
-    private void RenderUI(GraphicsContext graphicsContext2D) {
-        graphicsContext2D.setFill(Color.DARKRED);
-        graphicsContext2D.setFont(Font.font(15));
-        graphicsContext2D.fillText("Generation: " + population.getGeneration(), 350, 20);
-        graphicsContext2D.fillText("Maximum score: " + maxScore / 100, 350, 40);
-
-        graphicsContext2D.setFont(Font.font(25));
-        graphicsContext2D.fillText("Score: " + score / 100, 30, 30);
-
-    }
-
-    private void removePassedPipe() {
-        if (!pipeBlock.isEmpty()) {
-            pipeBlock.removeIf(pipe -> (pipe.getX() + Pipe.getWidth()) <= 0);
+    private void updateState() {
+        try {
+            setUserSettings();
+            background.updateState(mainCanvas.getWidth());
+            pipeArray.updateState(mainCanvas.getWidth(), mainCanvas.getHeight());
+            population.updateState(pipeArray, mainCanvas.getWidth(), mainCanvas.getHeight());
+            ui.updateState(population.getSmartBirds().stream().filter(smartBird -> !smartBird.isDead()).count());
+            if (population.isNextGen()) resetGame();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "An error occurred while updating the game", e);
         }
     }
 
@@ -108,28 +85,16 @@ public class Controller {
         Block.setHideHitbox(!hideHitbox.isSelected());
     }
 
-    private void isNextGen() {
-        for (SmartBird smartBird : population.getSmartBirds()) {
-            if (!smartBird.isDead()) return;
-        }
-        resetGame();
-    }
-
-    private void generatePipes() {
-        if (!pipeBlock.isEmpty()) {
-            Pipe pipeLast = pipeBlock.get(pipeBlock.size() - 1);
-            if (pipeLast.getX() > (mainCanvas.getWidth() / 1.7)) return;
-        }
-        int y = ThreadLocalRandom.current().nextInt(100, (int) mainCanvas.getHeight() - 100);
-        Pipe pipe = new Pipe(mainCanvas.getWidth(), y);
-        pipeBlock.add(pipe);
+    public void resetGame() {
+        pipeArray.clearPipeArray();
+        ui.nextGeneration();
     }
 
     @FXML
-    public void resetGame() {
-        pipeBlock.clear();
-        if (score > maxScore) maxScore = score;
-        score = 0;
-        population.evolve(MainApplication.getConfig().neuralNetwork.mutationRate, MainApplication.getConfig().neuralNetwork.eliteCounter);
+    private void nextGen() {
+        for (SmartBird smartBird : population.getSmartBirds()) {
+            smartBird.dead();
+        }
+        if (population.isNextGen()) resetGame();
     }
 }

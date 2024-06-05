@@ -12,7 +12,7 @@
             prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.birds.nn.controller.Controller">
    <Canvas fx:id="mainCanvas" height="400.0" layoutX="-7.0" width="520.0"/>
-   <Button layoutX="527.0" layoutY="355.0"  onAction="#resetGame" text="nextGen"/>
+   <Button layoutX="527.0" layoutY="355.0"  onAction="#nextGen" text="nextGen"/>
    <Slider fx:id="speedSlider" layoutX="520.0" layoutY="22.0" min="5.0" prefHeight="14.0" prefWidth="74.0"/>
    <Text layoutX="520.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game speed" wrappingWidth="74.0"/>
    <CheckBox fx:id="hideHitbox" layoutX="518.0" layoutY="42.0" mnemonicParsing="false" prefHeight="0.0" prefWidth="78.0"
