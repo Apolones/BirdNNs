@@ -1,5 +1,8 @@
 package com.birds.nn.model;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class UI {
     private long maxScore;
     private long score;

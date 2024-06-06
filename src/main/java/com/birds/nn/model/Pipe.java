@@ -1,20 +1,22 @@
 package com.birds.nn.model;
 
-import com.birds.nn.view.MainApplication;
+import com.birds.nn.utils.Config;
 
 public class Pipe extends Block {
-    private static final double speed;
-    private static final double holeSize;
-    private static final double width;
+    private final double speed;
+    private final double holeSize;
+    private final double width;
 
-    static {
-        speed = MainApplication.getConfig().game.pipeConfig.speed;
-        holeSize = MainApplication.getConfig().game.pipeConfig.holeSize;
-        width = MainApplication.getConfig().game.pipeConfig.width;
+    public Pipe(Config config) {
+        super(0, 0);
+        speed = config.game.pipeConfig.speed;
+        holeSize = config.game.pipeConfig.holeSize;
+        width = config.game.pipeConfig.width;
     }
 
-    public Pipe(double x, double y) {
-        super(x, y);
+    public void setInitialPosition(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     @Override
@@ -22,11 +24,15 @@ public class Pipe extends Block {
         x -= speed;
     }
 
-    public static double getHoleSize() {
+    public boolean isOutOfScreen(){
+       return x + width <= 0;
+    }
+
+    public double getHoleSize() {
         return holeSize;
     }
 
-    public static double getWidth() {
+    public double getWidth() {
         return width;
     }
 }

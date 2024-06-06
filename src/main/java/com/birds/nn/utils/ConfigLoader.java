@@ -1,4 +1,4 @@
-package com.birds.nn.config;
+package com.birds.nn.utils;
 
 import java.io.FileReader;
 import java.io.IOException;

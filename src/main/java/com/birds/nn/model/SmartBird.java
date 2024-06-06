@@ -1,37 +1,47 @@
 package com.birds.nn.model;
 
 import com.birds.nn.model.neuralnetwork.NeuralNetwork;
+import com.birds.nn.utils.Config;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+@Component
 public class SmartBird extends Bird {
 
-    private final NeuralNetwork neuralNetwork;
+    private NeuralNetwork neuralNetwork;
 
-    public SmartBird(NeuralNetwork neuralNetwork) {
-        this.neuralNetwork = neuralNetwork;
+    @Autowired
+    public SmartBird(Config config) {
+        super(config);
     }
 
     public void updateState(ArrayList<Pipe> pipeBlock, double maxX, double maxY) {
         super.updateState(pipeBlock, maxY);
-        if (isJump(pipeBlock, maxX, maxY)) super.Tap();
+        if (isJump(pipeBlock, maxX, maxY)) super.tap();
     }
 
     public boolean isJump(ArrayList<Pipe> pipeBlock, double width, double height) {
-        Pipe pipe = NearestPipe(pipeBlock);
+        Pipe pipe = nearestPipe(pipeBlock);
         return neuralNetwork.activate(new double[]{
-                (pipe.getX() - x + Bird.getRadius())                                      //distance to hole on X (normalized)
+                (pipe.getX() - x + radius)                                      //distance to hole on X (normalized)
                         / width,
-                (y - Bird.getRadius() - (pipe.getY() + Pipe.getHoleSize()))       //distance to hole on y bottom (normalized)
+                (y - radius - (pipe.getY() + pipe.getHoleSize()))       //distance to hole on y bottom (normalized)
                         / height,
-                (y + Bird.getRadius() - (pipe.getY() + Pipe.getHoleSize()))           //distance to hole on y upper (normalized)
+                (y + radius - (pipe.getY() + pipe.getHoleSize()))           //distance to hole on y upper (normalized)
                         / height,
                 getSpeed()                                                                   //bird speed (normalized)
-                        / Bird.getMaxSpeed()
+                        / maxSpeed
         })[0] > 0.5;
     }
 
     public NeuralNetwork getNeuralNetwork() {
         return neuralNetwork;
     }
+
+    public void setNeuralNetwork(NeuralNetwork neuralNetwork) {
+        this.neuralNetwork = neuralNetwork;
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.birds.nn.config;
+package com.birds.nn.utils;
 
 import java.util.List;
 
@@ -23,16 +23,17 @@ public class Config {
         public BackgroundConfig backgroundConfig;
 
         public static class BirdConfig {
-            public int startPositionX;
-            public int startPositionY;
+            public double startPositionX;
+            public double startPositionY;
             public double acceleration;
             public double maxSpeed;
             public double tapSpeed;
-            public int radius;
-            public int scaleImage;
+            public double radius;
+            public double scaleImage;
         }
 
         public static class PipeConfig {
+            public double count;
             public double speed;
             public double holeSize;
             public double width;

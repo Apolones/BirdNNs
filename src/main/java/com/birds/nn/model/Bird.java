@@ -1,45 +1,41 @@
 package com.birds.nn.model;
 
-import com.birds.nn.view.MainApplication;
+import com.birds.nn.utils.Config;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 
+@Component
 public class Bird extends Block {
-    private static final int startPositionX;
-    private static final int startPositionY;
-    private static final double acceleration;
-    private static final double maxSpeed;
-    private static final double tapSpeed;
-    private static final int radius;
+    protected final double acceleration;
+    protected final double maxSpeed;
+    protected final double tapSpeed;
+    protected final double radius;
+    protected double speed;
+    protected double headAngle;
+    protected long score;
+    protected boolean isDead;
 
-    static {
-        startPositionX = MainApplication.getConfig().game.birdConfig.startPositionX;
-        startPositionY = MainApplication.getConfig().game.birdConfig.startPositionY;
-        acceleration = MainApplication.getConfig().game.birdConfig.acceleration;
-        maxSpeed = MainApplication.getConfig().game.birdConfig.maxSpeed;
-        tapSpeed = MainApplication.getConfig().game.birdConfig.tapSpeed;
-        radius = MainApplication.getConfig().game.birdConfig.radius;
-    }
-
-    private double speed;
-    private double headAngle;
-    private long score;
-    private boolean isDead;
-
-    public Bird() {
-        super(startPositionX, startPositionY);
+    @Autowired
+    public Bird(Config config){
+        super(config.game.birdConfig.startPositionX, config.game.birdConfig.startPositionY);
         speed = 0;
         headAngle = -15;
         score = 0;
         isDead = false;
+        acceleration = config.game.birdConfig.acceleration;
+        maxSpeed = config.game.birdConfig.maxSpeed;
+        tapSpeed = config.game.birdConfig.tapSpeed;
+        radius = config.game.birdConfig.radius;
     }
 
     public void updateState(ArrayList<Pipe> pipeBlock, double maxY) {
         if (isDead) return;
-        Pipe pipe = NearestPipe(pipeBlock);
+        Pipe pipe = nearestPipe(pipeBlock);
         if (pipe.x < x + radius)
-            if (pipe.x + Pipe.getWidth() > x - radius)
-                if (y + radius > pipe.y + Pipe.getHoleSize() || y - radius < pipe.y - Pipe.getHoleSize()) {
+            if (pipe.x + pipe.getWidth() > x - radius)
+                if (y + radius > pipe.y + pipe.getHoleSize() || y - radius < pipe.y - pipe.getHoleSize()) {
                     dead();
                     return;
                 }
@@ -48,23 +44,24 @@ public class Bird extends Block {
         y += speed;
         score++;
         updateHeadAngle();
-        if (y <= 0 || y >= maxY) dead();
+        if (y <= radius || y >= maxY - radius) dead();
     }
 
-    protected Pipe NearestPipe(ArrayList<Pipe> pipeBlock) {
+    protected Pipe nearestPipe(ArrayList<Pipe> pipeBlock) {
         Pipe minPipe = null;
 
         for (Pipe pipe : pipeBlock) {
-            if (pipe.getX() + Pipe.getWidth() > x - radius) {
+            if (pipe.getX() + pipe.getWidth() > x - radius) {
                 if (minPipe == null || pipe.getX() < minPipe.getX()) {
                     minPipe = pipe;
                 }
             }
         }
+        //if (minPipe == null) return new PipeFactory().getPipes();
         return minPipe;
     }
 
-    public void Tap() {
+    public void tap() {
         this.speed = -tapSpeed;
     }
 
@@ -77,17 +74,8 @@ public class Bird extends Block {
         isDead = true;
     }
 
-    public void alive() {
-        score = 0;
-        isDead = false;
-    }
-
-    public static int getRadius() {
+    public double getRadius() {
         return radius;
-    }
-
-    public static double getMaxSpeed() {
-        return maxSpeed;
     }
 
     public boolean isDead() {
@@ -104,9 +92,5 @@ public class Bird extends Block {
 
     public double getHeadAngle() {
         return headAngle;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 }

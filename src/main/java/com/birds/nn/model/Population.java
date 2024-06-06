@@ -1,41 +1,49 @@
 package com.birds.nn.model;
 
+import com.birds.nn.utils.Config;
 import com.birds.nn.model.neuralnetwork.Layer;
 import com.birds.nn.model.neuralnetwork.NeuralNetwork;
 import com.birds.nn.model.neuralnetwork.Neuron;
-import com.birds.nn.view.MainApplication;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Component
 public class Population {
     private final int populationSize;
     private final List<Integer> inputs;
 
+    private final Config config;
     private List<SmartBird> smartBirds;
-    private SmartBird bestBird;
+    private NeuralNetwork bestNeuralNetwork;
     private long bestScore = 0;
-
-    public Population(int populationSize, int numInputs, List<Integer> numHidden, int numOutputs) {
-        this.populationSize = populationSize;
-        numHidden.add(numOutputs);
-        numHidden.add(0, numInputs);
-        this.inputs = numHidden;
+    @Autowired
+    public Population(Config config) {
+        this.config = config;
+        populationSize = config.neuralNetwork.populationSize;
+        inputs = config.neuralNetwork.hiddenLayers;
+        inputs.add(config.neuralNetwork.outputSize);
+        inputs.add(0, config.neuralNetwork.inputSize);
         smartBirds = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
-            smartBirds.add(new SmartBird(new NeuralNetwork(inputs)));
+            SmartBird smartBird = new SmartBird(config);
+            smartBird.setNeuralNetwork(new NeuralNetwork(inputs));
+            smartBirds.add(smartBird);
         }
     }
 
-    public void updateState(PipeArray pipeArray, double maxX, double maxY) {
+    public void updateState(PipeFactory pipeFactory, double maxX, double maxY) {
         for (SmartBird smartBird : smartBirds) {
             if (smartBird.isDead()) continue;
-            smartBird.updateState(pipeArray.getPipeArray(), maxX, maxY);
+            smartBird.updateState(pipeFactory.getPipes(), maxX, maxY);
         }
     }
 
     public SmartBird crossover(SmartBird parent1, SmartBird parent2) {
-        SmartBird child = new SmartBird(new NeuralNetwork(inputs));
+        SmartBird child = new SmartBird(config);
+        child.setNeuralNetwork(new NeuralNetwork(inputs));
         for (int i = 0; i < parent1.getNeuralNetwork().getLayers().length; i++) {
             Layer parent1Layer = parent1.getNeuralNetwork().getLayers()[i];
             Layer parent2Layer = parent2.getNeuralNetwork().getLayers()[i];
@@ -76,16 +84,18 @@ public class Population {
 
         if (bestScore < smartBirds.get(0).getScore()) {
             bestScore = smartBirds.get(0).getScore();
-            bestBird = smartBirds.get(0);
+            bestNeuralNetwork = smartBirds.get(0).getNeuralNetwork();
         }
 
-        bestBird.alive();
+        SmartBird bestBird = new SmartBird(config);
+        bestBird.setNeuralNetwork(bestNeuralNetwork);
         newGeneration.add(bestBird);
 
         for (int i = 0; i < eliteCount; i++) {
-            if (smartBirds.get(i) != bestBird) {
-                smartBirds.get(i).alive();
-                newGeneration.add(smartBirds.get(i));
+            if (smartBirds.get(i).getNeuralNetwork() != bestNeuralNetwork) {
+                SmartBird smartBird = new SmartBird(config);
+                smartBird.setNeuralNetwork(smartBirds.get(i).getNeuralNetwork());
+                newGeneration.add(smartBird);
             }
         }
 
@@ -105,7 +115,7 @@ public class Population {
         for (SmartBird smartBird : smartBirds) {
             if (!smartBird.isDead()) return false;
         }
-        evolve(MainApplication.getConfig().neuralNetwork.mutationRate, MainApplication.getConfig().neuralNetwork.eliteCounter);
+        evolve(config.neuralNetwork.mutationRate, config.neuralNetwork.eliteCounter);
         return true;
     }
 

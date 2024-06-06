@@ -1,9 +1,9 @@
 {
   "neuralNetwork": {
-    "populationSize" : 50,
+    "populationSize" : 10,
     "inputSize": 4,
     "hiddenLayers": [
-      8
+      5
     ],
     "outputSize": 1,
     "mutationRate": 0.1,
@@ -12,20 +12,21 @@
   "game": {
     "gameTitle" : "learning birds",
     "birdConfig": {
-      "startPositionX" : 50,
-      "startPositionY" : 100,
+      "startPositionX" : 50.0,
+      "startPositionY" : 100.0,
       "acceleration" : 0.1,
       "maxSpeed" : 5.8,
       "tapSpeed" : 3.5,
-      "radius" : 15,
-      "scaleImage" : 3
+      "radius" : 15.0,
+      "scaleImage" : 3.0
     },
     "pipeConfig" : {
+      "count" : 3.0,
       "speed" : 1.0,
       "holeSize" : 55.0,
       "width" : 40.0,
       "imageTopHeight" : 20,
-      "imageTopWight" : 3
+      "imageTopWight" : 3.0
     },
     "backgroundConfig" : {
       "speed" : 0.1

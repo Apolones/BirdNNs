@@ -47,8 +47,8 @@ public class Neuron {
 
     private double correctInputValue(double input, int index) {
         if (input > 1 || input < -1) {
-            logger.log(Level.SEVERE, "Warning: Input should be in the range [-1;1] (Input[" + index + "]: " + input + ") changed to 1/" + input);
-            return 1 / input;
+            logger.log(Level.SEVERE, "Warning: Input should be in the range [-1;1] (Input[" + index + "]: " + input + ")");
+            return input > 1 ? 1 : -1;
         }
         return input;
     }
