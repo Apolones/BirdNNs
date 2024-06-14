@@ -18,6 +18,8 @@ public class Config {
 
     public static class GameConfig {
         public String gameTitle;
+        public double gameWidth;
+        public double gameHeight;
         public BirdConfig birdConfig;
         public PipeConfig pipeConfig;
         public BackgroundConfig backgroundConfig;
@@ -25,7 +27,7 @@ public class Config {
         public static class BirdConfig {
             public double startPositionX;
             public double startPositionY;
-            public double acceleration;
+            public double gravity;
             public double maxSpeed;
             public double tapSpeed;
             public double radius;
@@ -33,7 +35,7 @@ public class Config {
         }
 
         public static class PipeConfig {
-            public double count;
+            public double distanceBetweenPipe;
             public double speed;
             public double holeSize;
             public double width;

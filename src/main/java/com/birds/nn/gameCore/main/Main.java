@@ -1,4 +1,4 @@
-package com.birds.nn;
+package com.birds.nn.gameCore.main;
 
 import com.birds.nn.utils.Config;
 import javafx.application.Application;
@@ -34,7 +34,7 @@ public class Main extends Application {
         fxmlLoader.setControllerFactory(context::getBean);
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle(config.game.gameTitle);
-        stage.setResizable(false);
+        stage.setResizable(true);
         stage.setScene(scene);
         stage.getIcons().add(new Image(config.resources.iconImage));
         stage.show();

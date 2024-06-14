@@ -1,49 +1,48 @@
-package com.birds.nn.model;
+package com.birds.nn.gameCore.gameObjects;
 
 import com.birds.nn.utils.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class PipeFactory {
     private final ArrayList<Pipe> pipes;
-    private final double count;
-
-    @Autowired
-    Config config;
+    private final Config config;
 
     @Autowired
     public PipeFactory(Config config) {
+        this.config = config;
         this.pipes = new ArrayList<>();
-        count = config.game.pipeConfig.count;
     }
 
-    public void updateState(double maxX, double maxY) {
-        generatePipes(maxX, maxY);
+    public void updateState() {
+        generatePipes();
         for (Pipe pipe : pipes) {
             pipe.updateState();
         }
-        removePassedPipe();
+        removeOutOfBoundsPipe();
     }
 
-    private void removePassedPipe() {
+    private void removeOutOfBoundsPipe() {
         if (!pipes.isEmpty()) {
-            pipes.removeIf(Pipe::isOutOfScreen);
+            pipes.removeIf(Pipe::isOutOfBounds);
         }
     }
 
-    private void generatePipes(double maxX, double maxY) {
+    private void generatePipes() {
         if (!pipes.isEmpty()) {
             Pipe pipeLast = pipes.get(pipes.size() - 1);
-            if (maxX - pipeLast.getX() < (maxX / count)) return;
+            if (config.game.gameWidth - pipeLast.getX() < config.game.pipeConfig.distanceBetweenPipe) return;
         }
-        double y = ThreadLocalRandom.current().nextDouble(config.game.pipeConfig.holeSize + 10,  maxY - config.game.pipeConfig.holeSize - 10);
-        Pipe pipe = new Pipe(config);
-        pipe.setInitialPosition(maxX, y);
+        Pipe pipe = createPipe();
+        pipe.setRandomPosition(config.game.gameWidth, config.game.gameHeight);
         pipes.add(pipe);
+    }
+
+    public Pipe createPipe() {
+        return new Pipe(config);
     }
 
     public void clearPipeArray() {

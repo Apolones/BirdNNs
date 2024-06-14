@@ -1,6 +1,8 @@
-package com.birds.nn.model;
+package com.birds.nn.gameCore.gameObjects;
 
 import com.birds.nn.utils.Config;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Pipe extends Block {
     private final double speed;
@@ -8,24 +10,24 @@ public class Pipe extends Block {
     private final double width;
 
     public Pipe(Config config) {
-        super(0, 0);
+        super(config.game.gameWidth, config.game.gameHeight / 2);
         speed = config.game.pipeConfig.speed;
         holeSize = config.game.pipeConfig.holeSize;
         width = config.game.pipeConfig.width;
     }
 
-    public void setInitialPosition(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-
     @Override
     public void updateState() {
-        x -= speed;
+        setX(getX() - speed);
     }
 
-    public boolean isOutOfScreen(){
-       return x + width <= 0;
+    public void setRandomPosition(double x, double y) {
+        setX(x);
+        setY(ThreadLocalRandom.current().nextDouble(holeSize, y - holeSize));
+    }
+
+    public boolean isOutOfBounds() {
+        return getX() + width <= 0;
     }
 
     public double getHoleSize() {

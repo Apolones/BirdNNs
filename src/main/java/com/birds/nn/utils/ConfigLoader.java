@@ -1,11 +1,11 @@
 package com.birds.nn.utils;
 
+import com.google.gson.Gson;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.google.gson.Gson;
 
 public class ConfigLoader {
     private static final Logger LOGGER = Logger.getLogger(ConfigLoader.class.getName());

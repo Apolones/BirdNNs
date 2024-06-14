@@ -1,49 +1,61 @@
-package com.birds.nn.model;
+package com.birds.nn.neuralNetwork;
 
+import com.birds.nn.gameCore.gameObjects.Bird;
+import com.birds.nn.neuralNetwork.neuralNetworkCore.Layer;
+import com.birds.nn.neuralNetwork.neuralNetworkCore.NeuralNetwork;
+import com.birds.nn.neuralNetwork.neuralNetworkCore.Neuron;
 import com.birds.nn.utils.Config;
-import com.birds.nn.model.neuralnetwork.Layer;
-import com.birds.nn.model.neuralnetwork.NeuralNetwork;
-import com.birds.nn.model.neuralnetwork.Neuron;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class Population {
     private final int populationSize;
-    private final List<Integer> inputs;
+    private final double mutationRate;
+    private final int eliteCounter;
+    private int generation;
 
-    private final Config config;
     private List<SmartBird> smartBirds;
     private NeuralNetwork bestNeuralNetwork;
-    private long bestScore = 0;
+    private long bestScore;
+
+    private final SmartBirdFactory smartBirdFactory;
+
     @Autowired
-    public Population(Config config) {
-        this.config = config;
-        populationSize = config.neuralNetwork.populationSize;
-        inputs = config.neuralNetwork.hiddenLayers;
-        inputs.add(config.neuralNetwork.outputSize);
-        inputs.add(0, config.neuralNetwork.inputSize);
+    public Population(Config config, SmartBirdFactory smartBirdFactory) {
+        bestScore = 0;
+        generation = 0;
+        this.smartBirdFactory = smartBirdFactory;
+        this.populationSize = config.neuralNetwork.populationSize;
+        this.mutationRate = config.neuralNetwork.mutationRate;
+        this.eliteCounter = config.neuralNetwork.eliteCounter;
+        initializePopulation();
+    }
+
+    private void initializePopulation() {
         smartBirds = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
-            SmartBird smartBird = new SmartBird(config);
-            smartBird.setNeuralNetwork(new NeuralNetwork(inputs));
+            SmartBird smartBird = smartBirdFactory.createSmartBird();
             smartBirds.add(smartBird);
         }
     }
 
-    public void updateState(PipeFactory pipeFactory, double maxX, double maxY) {
+
+    public void updateState() {
         for (SmartBird smartBird : smartBirds) {
             if (smartBird.isDead()) continue;
-            smartBird.updateState(pipeFactory.getPipes(), maxX, maxY);
+            smartBird.updateState();
         }
     }
 
-    public SmartBird crossover(SmartBird parent1, SmartBird parent2) {
-        SmartBird child = new SmartBird(config);
-        child.setNeuralNetwork(new NeuralNetwork(inputs));
+    private SmartBird crossover(SmartBird parent1, SmartBird parent2) {
+        SmartBird child = smartBirdFactory.createSmartBird();
         for (int i = 0; i < parent1.getNeuralNetwork().getLayers().length; i++) {
             Layer parent1Layer = parent1.getNeuralNetwork().getLayers()[i];
             Layer parent2Layer = parent2.getNeuralNetwork().getLayers()[i];
@@ -65,7 +77,7 @@ public class Population {
         return child;
     }
 
-    public void mutate(SmartBird smartBird, double mutationRate) {
+    private void mutate(SmartBird smartBird, double mutationRate) {
         for (Layer layer : smartBird.getNeuralNetwork().getLayers()) {
             for (Neuron neuron : layer.getNeurons()) {
                 for (int i = 0; i < neuron.getWeights().length; i++) {
@@ -77,8 +89,14 @@ public class Population {
         }
     }
 
-    public void evolve(double mutationRate, int eliteCount) {
-
+    /**
+     * Evolves the population by selecting elite birds, performing crossover and mutation,
+     * and generating a new generation of smart birds.
+     *
+     * @param mutationRate The rate at which mutation should occur during evolution.
+     * @param eliteCount   The number of elite birds to retain without modification.
+     */
+    private void evolve(double mutationRate, int eliteCount) {
         List<SmartBird> newGeneration = new ArrayList<>();
         smartBirds.sort(Comparator.comparing(Bird::getScore).reversed());
 
@@ -87,15 +105,12 @@ public class Population {
             bestNeuralNetwork = smartBirds.get(0).getNeuralNetwork();
         }
 
-        SmartBird bestBird = new SmartBird(config);
-        bestBird.setNeuralNetwork(bestNeuralNetwork);
+        SmartBird bestBird = smartBirdFactory.createSmartBird(bestNeuralNetwork);
         newGeneration.add(bestBird);
 
         for (int i = 0; i < eliteCount; i++) {
             if (smartBirds.get(i).getNeuralNetwork() != bestNeuralNetwork) {
-                SmartBird smartBird = new SmartBird(config);
-                smartBird.setNeuralNetwork(smartBirds.get(i).getNeuralNetwork());
-                newGeneration.add(smartBird);
+                newGeneration.add(smartBirdFactory.createSmartBird(smartBirds.get(i).getNeuralNetwork()));
             }
         }
 
@@ -111,15 +126,28 @@ public class Population {
         smartBirds = newGeneration;
     }
 
-    public Boolean isNextGen() {
+    public int countLiveBirds() {
+        int count = 0;
         for (SmartBird smartBird : smartBirds) {
-            if (!smartBird.isDead()) return false;
+            if (!smartBird.isDead()) count++;
         }
-        evolve(config.neuralNetwork.mutationRate, config.neuralNetwork.eliteCounter);
-        return true;
+        return count;
+    }
+
+    public void nextGeneration() {
+        generation++;
+        evolve(mutationRate, eliteCounter);
     }
 
     public List<SmartBird> getSmartBirds() {
         return smartBirds;
+    }
+
+    public int getGeneration() {
+        return generation;
+    }
+
+    public long getBestScore() {
+        return bestScore;
     }
 }

@@ -1,9 +1,14 @@
-package com.birds.nn.controller;
+package com.birds.nn.gameCore.gameLoop;
 
+import com.birds.nn.gameCore.gameLogic.GameService;
+import com.birds.nn.gameCore.gameObjects.Background;
+import com.birds.nn.gameCore.gameObjects.Block;
+import com.birds.nn.gameCore.gameObjects.PipeFactory;
+import com.birds.nn.gameCore.gameObjects.UI;
+import com.birds.nn.graphics.Render;
+import com.birds.nn.neuralNetwork.Population;
 import com.birds.nn.utils.Config;
-import com.birds.nn.model.*;
 import com.birds.nn.utils.Formatter;
-import com.birds.nn.view.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -13,16 +18,19 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 @Controller
 public class MainController {
     private Timeline timeline;
 
+    @FXML
+    private AnchorPane rootPane;
     @FXML
     private Canvas mainCanvas;
     @FXML
@@ -30,27 +38,27 @@ public class MainController {
     @FXML
     private CheckBox hideHitbox;
     @FXML
-    private TextField startPositionX, startPositionY, acceleration, maxSpeed, tapSpeed, pipeCount, pipeSpeed, pipeWidth, pipeHoleSize;
-
-    @Autowired
-    private Config config;
-
-    @Autowired
-    private Background background;
-
-    @Autowired
-    private PipeFactory pipeFactory;
-
-    @Autowired
-    private Population population;
-
-    @Autowired
-    private UI ui;
-
-    @Autowired
-    private Render render;
+    private TextField startPositionX, startPositionY, gravity, maxSpeed, tapSpeed, distanceBetweenPipe, pipeSpeed, pipeWidth, pipeHoleSize;
 
     private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
+
+    private final Config config;
+    private final Background background;
+    private final PipeFactory pipeFactory;
+    private final Population population;
+    private final UI ui;
+    private final Render render;
+    private final GameService gameService;
+
+    public MainController(Config config, Background background, PipeFactory pipeFactory, Population population, UI ui, Render render, GameService gameService) {
+        this.config = config;
+        this.background = background;
+        this.pipeFactory = pipeFactory;
+        this.population = population;
+        this.ui = ui;
+        this.render = render;
+        this.gameService = gameService;
+    }
 
     @FXML
     void initialize() {
@@ -61,7 +69,8 @@ public class MainController {
             ));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
-            setUpTextField();
+            rootPane.widthProperty().addListener((observable, oldValue, newValue) -> resizeCanvas());
+            rootPane.heightProperty().addListener((observable, oldValue, newValue) -> resizeCanvas());
             LOGGER.info("Game started");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "An error occurred while starting the game", e);
@@ -88,11 +97,11 @@ public class MainController {
     private void updateState() {
         try {
             setUserSettings();
-            background.updateState(mainCanvas.getWidth());
-            pipeFactory.updateState(mainCanvas.getWidth(), mainCanvas.getHeight());
-            population.updateState(pipeFactory, mainCanvas.getWidth(), mainCanvas.getHeight());
-            ui.updateState(population.getSmartBirds().stream().filter(smartBird -> !smartBird.isDead()).count());
-            if (population.isNextGen()) resetGame();
+            gameService.updateState();
+            background.updateState();
+            pipeFactory.updateState();
+            population.updateState();
+            ui.updateState();
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "An error occurred while updating the game", e);
         }
@@ -103,57 +112,57 @@ public class MainController {
         Block.setHideHitbox(!hideHitbox.isSelected());
     }
 
-    public void resetGame() {
-        pipeFactory.clearPipeArray();
-        ui.nextGeneration();
-    }
-
     @FXML
     private void nextGen() {
-        for (SmartBird smartBird : population.getSmartBirds()) {
-            smartBird.dead();
-        }
-        if (population.isNextGen()) resetGame();
+        gameService.nextGeneration();
     }
 
     @FXML
     private void save() {
         config.game.birdConfig.startPositionX = Double.parseDouble(startPositionX.getText());
         config.game.birdConfig.startPositionY = Double.parseDouble(startPositionY.getText());
-        config.game.birdConfig.acceleration = Double.parseDouble(acceleration.getText());
+        config.game.birdConfig.gravity = Double.parseDouble(gravity.getText());
         config.game.birdConfig.maxSpeed = Double.parseDouble(maxSpeed.getText());
         config.game.birdConfig.tapSpeed = Double.parseDouble(tapSpeed.getText());
-        config.game.pipeConfig.count = Double.parseDouble(pipeCount.getText());
+        config.game.pipeConfig.distanceBetweenPipe = Double.parseDouble(distanceBetweenPipe.getText());
         config.game.pipeConfig.speed = Double.parseDouble(pipeSpeed.getText());
         config.game.pipeConfig.width = Double.parseDouble(pipeWidth.getText());
         config.game.pipeConfig.holeSize = Double.parseDouble(pipeHoleSize.getText());
-       // Bird.updateStatic();
-        // Pipe.updateStatic();
-        //PipeFactory.updateStatic();
         setUpTextField();
         nextGen();
     }
 
     private void setUpTextField() {
-        startPositionX.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getWidth()));
-        startPositionY.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getHeight()));
-        acceleration.setTextFormatter(Formatter.createDoubleTextFormatter(0, 100));
-        maxSpeed.setTextFormatter(Formatter.createDoubleTextFormatter(0, 100));
-        tapSpeed.setTextFormatter(Formatter.createDoubleTextFormatter(0, config.game.birdConfig.maxSpeed));
-        pipeCount.setTextFormatter(Formatter.createDoubleTextFormatter(0, 10));
-        pipeSpeed.setTextFormatter(Formatter.createDoubleTextFormatter(0, 10));
-        pipeWidth.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getWidth()));
-        pipeHoleSize.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getHeight()/2 - 20));
-
-
+        setUpTextFieldLimits();
         startPositionX.setText(String.valueOf(config.game.birdConfig.startPositionX));
         startPositionY.setText(String.valueOf(config.game.birdConfig.startPositionY));
-        acceleration.setText(String.valueOf(config.game.birdConfig.acceleration));
+        gravity.setText(String.valueOf(config.game.birdConfig.gravity));
         maxSpeed.setText(String.valueOf(config.game.birdConfig.maxSpeed));
         tapSpeed.setText(String.valueOf(config.game.birdConfig.tapSpeed));
-        pipeCount.setText(String.valueOf(config.game.pipeConfig.count));
+        distanceBetweenPipe.setText(String.valueOf(config.game.pipeConfig.distanceBetweenPipe));
         pipeSpeed.setText(String.valueOf(config.game.pipeConfig.speed));
         pipeWidth.setText(String.valueOf(config.game.pipeConfig.width));
         pipeHoleSize.setText(String.valueOf(config.game.pipeConfig.holeSize));
     }
+
+    private void setUpTextFieldLimits() {
+        startPositionX.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getWidth()));
+        startPositionY.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getHeight()));
+        gravity.setTextFormatter(Formatter.createDoubleTextFormatter(0, 100));
+        maxSpeed.setTextFormatter(Formatter.createDoubleTextFormatter(0, 100));
+        tapSpeed.setTextFormatter(Formatter.createDoubleTextFormatter(0, config.game.birdConfig.maxSpeed));
+        distanceBetweenPipe.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getWidth()));
+        pipeSpeed.setTextFormatter(Formatter.createDoubleTextFormatter(0, 10));
+        pipeWidth.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getWidth()));
+        pipeHoleSize.setTextFormatter(Formatter.createDoubleTextFormatter(0, mainCanvas.getHeight() / 2 - 20));
+    }
+
+    private void resizeCanvas() {
+        config.game.gameWidth = rootPane.getWidth() - 105;
+        config.game.gameHeight = rootPane.getHeight();
+        mainCanvas.setWidth(config.game.gameWidth);
+        mainCanvas.setHeight(config.game.gameHeight);
+        setUpTextField();
+    }
+
 }

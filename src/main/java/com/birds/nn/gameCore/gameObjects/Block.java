@@ -1,8 +1,8 @@
-package com.birds.nn.model;
+package com.birds.nn.gameCore.gameObjects;
 
 public class Block {
-    double x;
-    double y;
+    private double x;
+    private double y;
     static boolean hideHitbox = true;
 
     public Block(double x, double y) {

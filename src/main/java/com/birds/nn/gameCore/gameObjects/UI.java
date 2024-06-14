@@ -1,5 +1,6 @@
-package com.birds.nn.model;
+package com.birds.nn.gameCore.gameObjects;
 
+import com.birds.nn.neuralNetwork.Population;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -8,28 +9,25 @@ public class UI {
     private long score;
     private int generation;
     private long numBirds;
+    private final Population population;
 
-    public UI() {
+    public UI(Population population) {
+        this.population = population;
         this.maxScore = 0;
         this.score = 0;
         this.generation = 0;
         this.numBirds = 0;
     }
 
-    public void updateState(long numBirds) {
+    public void updateState() {
         score++;
-        if (score > maxScore) {
-            maxScore = score;
-        }
-        this.numBirds = numBirds;
+        generation = population.getGeneration();
+        numBirds = population.countLiveBirds();
+        maxScore = population.getBestScore();
+        if (score > maxScore) maxScore = score;
     }
 
-    public void nextGeneration() {
-        generation++;
-        resetScore();
-    }
-
-    private void resetScore() {
+    public void resetScore() {
         score = 0;
     }
 

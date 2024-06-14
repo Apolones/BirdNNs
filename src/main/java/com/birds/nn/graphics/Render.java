@@ -1,6 +1,6 @@
-package com.birds.nn.view;
+package com.birds.nn.graphics;
 
-import com.birds.nn.model.*;
+import com.birds.nn.gameCore.gameObjects.*;
 import com.birds.nn.utils.Config;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -14,17 +14,25 @@ import java.util.List;
 
 @Component
 public class Render {
+    private final Config config;
+    private final Image imgBackground;
+    private final Image imgBird;
+    private final Image imgPipe;
 
     @Autowired
-    private Config config;
+    public Render(Config config) {
+        this.config = config;
+        imgBackground = new Image(config.resources.backgroundImage);
+        imgBird = new Image(config.resources.birdImage);
+        imgPipe = new Image(config.resources.pipeImage);
+    }
 
     public void render(GraphicsContext context, Background background) {
         double x = background.getX();
         double y = background.getY();
-        Image image = new Image(config.resources.backgroundImage);
 
-        context.drawImage(image, x, y, context.getCanvas().getWidth(), context.getCanvas().getHeight());
-        context.drawImage(image, context.getCanvas().getWidth() + x, y, context.getCanvas().getWidth(), context.getCanvas().getHeight());
+        context.drawImage(imgBackground, x, y, context.getCanvas().getWidth(), context.getCanvas().getHeight());
+        context.drawImage(imgBackground, context.getCanvas().getWidth() + x, y, context.getCanvas().getWidth(), context.getCanvas().getHeight());
     }
 
     public void render(GraphicsContext context, Bird bird) {
@@ -35,14 +43,13 @@ public class Render {
         double headAngle = bird.getHeadAngle();
         double radius = bird.getRadius();
         double scaleImage = config.game.birdConfig.scaleImage;
-        Image image = new Image(config.resources.birdImage);
 
         if (Bird.showHitbox()) {
             context.setFill(Color.YELLOW);
             context.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
             context.strokeRect(x - radius, y - radius, 2 * radius, 2 * radius);
         } else {
-            drawRotatedImage(context, image, headAngle, x - (scaleImage * radius / 2d), y - (scaleImage * radius / 2d), radius * scaleImage, radius * scaleImage);
+            drawRotatedImage(context, imgBird, headAngle, x - (scaleImage * radius / 2d), y - (scaleImage * radius / 2d), radius * scaleImage, radius * scaleImage);
         }
     }
 
@@ -53,18 +60,17 @@ public class Render {
         double holeSize = pipe.getHoleSize();
         double imageTopWight = config.game.pipeConfig.imageTopWight;
         double imageTopHeight = config.game.pipeConfig.imageTopHeight;
-        Image image = new Image(config.resources.pipeImage);
 
         if (Pipe.showHitbox()) {
             context.setFill(Color.GREEN);
             context.fillRect(x, 0, width, y - holeSize);
             context.fillRect(x, y + holeSize, width, context.getCanvas().getHeight());
         } else {
-            context.drawImage(image, x, 0, width, y - holeSize);
-            context.drawImage(image, x - imageTopWight, y - holeSize - imageTopHeight, width + (2 * imageTopWight), imageTopHeight);
+            context.drawImage(imgPipe, x, 0, width, y - holeSize);
+            context.drawImage(imgPipe, x - imageTopWight, y - holeSize - imageTopHeight, width + (2 * imageTopWight), imageTopHeight);
 
-            context.drawImage(image, x, y + holeSize, width, context.getCanvas().getHeight());
-            context.drawImage(image, x - imageTopWight, y + holeSize, width + (2 * imageTopWight), imageTopHeight);
+            context.drawImage(imgPipe, x, y + holeSize, width, context.getCanvas().getHeight());
+            context.drawImage(imgPipe, x - imageTopWight, y + holeSize, width + (2 * imageTopWight), imageTopHeight);
         }
     }
 

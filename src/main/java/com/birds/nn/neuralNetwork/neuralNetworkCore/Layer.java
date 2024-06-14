@@ -1,4 +1,4 @@
-package com.birds.nn.model.neuralnetwork;
+package com.birds.nn.neuralNetwork.neuralNetworkCore;
 
 public class Layer {
     private final Neuron[] neurons;
@@ -21,5 +21,4 @@ public class Layer {
     public Neuron[] getNeurons() {
         return neurons;
     }
-
 }

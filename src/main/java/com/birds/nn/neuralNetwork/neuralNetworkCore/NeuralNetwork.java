@@ -1,4 +1,4 @@
-package com.birds.nn.model.neuralnetwork;
+package com.birds.nn.neuralNetwork.neuralNetworkCore;
 
 import java.util.List;
 

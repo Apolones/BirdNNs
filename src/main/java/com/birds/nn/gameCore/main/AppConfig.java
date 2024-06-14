@@ -1,4 +1,4 @@
-package com.birds.nn;
+package com.birds.nn.gameCore.main;
 
 import com.birds.nn.utils.Config;
 import com.birds.nn.utils.ConfigLoader;
