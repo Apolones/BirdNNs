@@ -7,6 +7,7 @@ import com.birds.nn.neuralNetwork.neuralNetworkCore.NeuralNetwork;
 import com.birds.nn.utils.Config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SmartBird extends Bird {
 
@@ -44,7 +45,7 @@ public class SmartBird extends Bird {
      */
     private boolean isJump(ArrayList<Pipe> pipes, double width, double height) {
         Pipe pipe = nearestPipe(pipes);
-        return neuralNetwork.activate(new double[]{
+        double[] outputs = neuralNetwork.activate(new double[]{
                 (pipe.getX() - getX() + getRadius())
                         / width,
                 (getY() - getRadius() - (pipe.getY() + pipe.getHoleSize()))
@@ -53,7 +54,8 @@ public class SmartBird extends Bird {
                         / height,
                 getSpeed()
                         / getMaxSpeed()
-        })[0] > 0.5;
+        });
+        return Arrays.stream(outputs).average().orElse(0) > 0.5;
     }
 
     /**

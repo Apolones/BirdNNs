@@ -26,7 +26,7 @@ public class GameService {
     }
 
     public void updateState() {
-        checkCollision(pipeFactory.getPipes(), population.getSmartBirds(), config.game.gameHeight);
+        checkCollision(pipeFactory.getPipes(), population.getSmartBirds(), config.game.gameWidth, config.game.gameHeight);
         if (population.countLiveBirds() == 0) nextGeneration();
     }
 
@@ -36,25 +36,26 @@ public class GameService {
         population.nextGeneration();
     }
 
-    private void checkCollision(List<Pipe> pipes, List<? extends Bird> birds, double maxY) {
+    private void checkCollision(List<Pipe> pipes, List<? extends Bird> birds, double maxX, double maxY) {
         List<? extends Bird> liveBirds = birds.stream().filter(bird -> !bird.isDead()).toList();
-        List<Pipe> nearestPipes = null;
 
-        if (!liveBirds.isEmpty()) {
-            Bird bird = liveBirds.get(0);
-            nearestPipes = nearestPipes(pipes, bird.getX() - bird.getRadius(), bird.getX() + bird.getRadius());
-        }
         for (Bird bird : liveBirds) {
-            if (bird.getY() <= bird.getRadius() || bird.getY() >= maxY - bird.getRadius()) {
+            if (bird.getY() <= bird.getRadius() || bird.getY() >= maxY - bird.getRadius() ||
+                    bird.getX() <= bird.getRadius() || bird.getX() >= maxX - bird.getRadius()) {
                 bird.dead();
                 continue;
             }
+
+            List<Pipe> nearestPipes = nearestPipes(pipes, bird.getX() - bird.getRadius(), bird.getX() + bird.getRadius());
+
             for (Pipe pipe : nearestPipes) {
-                if (pipe.getX() < bird.getX() + bird.getRadius())
-                    if (pipe.getX() + pipe.getWidth() > bird.getX() - bird.getRadius())
-                        if (bird.getY() + bird.getRadius() > pipe.getY() + pipe.getHoleSize() || bird.getY() - bird.getRadius() < pipe.getY() - pipe.getHoleSize()) {
-                            bird.dead();
-                        }
+                if (pipe.getX() < bird.getX() + bird.getRadius()
+                        && pipe.getX() + pipe.getWidth() > bird.getX() - bird.getRadius()) {
+                    if (bird.getY() + bird.getRadius() > pipe.getY() + pipe.getHoleSize()
+                            || bird.getY() - bird.getRadius() < pipe.getY() - pipe.getHoleSize()) {
+                        bird.dead();
+                    }
+                }
             }
         }
     }
@@ -62,7 +63,9 @@ public class GameService {
     private List<Pipe> nearestPipes(List<Pipe> pipes, double minX, double maxX) {
         List<Pipe> nearestPipes = new ArrayList<>();
         for (Pipe pipe : pipes) {
-            if (pipe.getX() + pipe.getWidth() > minX && pipe.getX() - pipe.getWidth() < maxX) nearestPipes.add(pipe);
+            if (pipe.getX() + pipe.getWidth() > minX && pipe.getX() - pipe.getWidth() < maxX) {
+                nearestPipes.add(pipe);
+            }
         }
         return nearestPipes;
     }
