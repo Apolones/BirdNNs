@@ -20,6 +20,9 @@ class PipeFactoryTest {
     private Config.GameConfig game;
 
     @Mock
+    private Config.GameConfig.WindowConfig windowConfig;
+
+    @Mock
     private Config.GameConfig.PipeConfig pipeConfig;
 
     @Mock
@@ -30,6 +33,7 @@ class PipeFactoryTest {
     @BeforeEach
     void setUp() {
         config.game = game;
+        game.windowConfig = windowConfig;
         game.pipeConfig = pipeConfig;
 
         pipeConfig.width = 10;
@@ -37,8 +41,8 @@ class PipeFactoryTest {
         pipeConfig.holeSize = 10;
         pipeConfig.distanceBetweenPipe = 200;
 
-        game.gameWidth = 400;
-        game.gameHeight = 400;
+        game.windowConfig.gameWidth = 400;
+        game.windowConfig.gameHeight = 400;
 
         pipeFactory = spy(new PipeFactory(config));
     }

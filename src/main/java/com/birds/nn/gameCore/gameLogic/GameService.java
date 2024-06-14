@@ -26,7 +26,7 @@ public class GameService {
     }
 
     public void updateState() {
-        checkCollision(pipeFactory.getPipes(), population.getSmartBirds(), config.game.gameWidth, config.game.gameHeight);
+        checkCollision(pipeFactory.getPipes(), population.getSmartBirds(), config.game.windowConfig.gameWidth, config.game.windowConfig.gameHeight);
         if (population.countLiveBirds() == 0) nextGeneration();
     }
 

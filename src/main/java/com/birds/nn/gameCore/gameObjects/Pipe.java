@@ -10,7 +10,7 @@ public class Pipe extends Block {
     private final double width;
 
     public Pipe(Config config) {
-        super(config.game.gameWidth, config.game.gameHeight / 2);
+        super(config.game.windowConfig.gameWidth, config.game.windowConfig.gameHeight / 2);
         speed = config.game.pipeConfig.speed;
         holeSize = config.game.pipeConfig.holeSize;
         width = config.game.pipeConfig.width;

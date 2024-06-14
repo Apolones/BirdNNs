@@ -36,13 +36,18 @@ public class GameServiceTest {
     @Mock
     private Config.GameConfig game;
 
+    @Mock
+    private Config.GameConfig.WindowConfig windowConfig;
+
     @InjectMocks
     private GameService gameService;
 
     @BeforeEach
     public void setUp() {
         config.game = game;
-        game.gameHeight = 800;
+        game.windowConfig = windowConfig;
+        game.windowConfig.gameHeight = 800;
+        game.windowConfig.gameWidth = 800;
     }
 
     @Test

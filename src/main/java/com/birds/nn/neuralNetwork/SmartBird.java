@@ -24,7 +24,7 @@ public class SmartBird extends Bird {
 
     public void updateState() {
         super.updateState();
-        if (isJump(pipeFactory.getPipes(), config.game.gameWidth, config.game.gameHeight)) super.tap();
+        if (isJump(pipeFactory.getPipes(), config.game.windowConfig.gameWidth, config.game.windowConfig.gameHeight)) super.tap();
     }
 
     /**

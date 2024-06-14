@@ -24,6 +24,9 @@ class SmartBirdTest {
     private Config.GameConfig game;
 
     @Mock
+    private Config.GameConfig.WindowConfig windowConfig;
+
+    @Mock
     private Config.GameConfig.BirdConfig birdConfig;
 
     @Mock
@@ -40,6 +43,7 @@ class SmartBirdTest {
     @BeforeEach
     void setUp() {
         config.game = game;
+        game.windowConfig = windowConfig;
         game.birdConfig = birdConfig;
 
         birdConfig.startPositionX = 0;
@@ -49,8 +53,8 @@ class SmartBirdTest {
         birdConfig.tapSpeed = 10.0;
         birdConfig.radius = 10.0;
 
-        game.gameHeight = 400;
-        game.gameWidth = 400;
+        game.windowConfig.gameHeight = 400;
+        game.windowConfig.gameWidth = 400;
 
         ArrayList<Pipe> pipes = new ArrayList<>();
         pipes.add(pipe);

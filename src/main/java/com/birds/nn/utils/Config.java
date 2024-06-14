@@ -18,12 +18,17 @@ public class Config {
 
     public static class GameConfig {
         public String gameTitle;
-        public double gameWidth;
-        public double gameHeight;
+        public WindowConfig windowConfig;
         public BirdConfig birdConfig;
         public PipeConfig pipeConfig;
         public BackgroundConfig backgroundConfig;
 
+        public static class WindowConfig {
+            public double minWidth;
+            public double minHeight;
+            public double gameWidth;
+            public double gameHeight;
+        }
         public static class BirdConfig {
             public double startPositionX;
             public double startPositionY;

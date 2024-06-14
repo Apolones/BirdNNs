@@ -34,10 +34,10 @@ public class PipeFactory {
     private void generatePipes() {
         if (!pipes.isEmpty()) {
             Pipe pipeLast = pipes.get(pipes.size() - 1);
-            if (config.game.gameWidth - pipeLast.getX() < config.game.pipeConfig.distanceBetweenPipe) return;
+            if (config.game.windowConfig.gameWidth - pipeLast.getX() < config.game.pipeConfig.distanceBetweenPipe) return;
         }
         Pipe pipe = createPipe();
-        pipe.setRandomPosition(config.game.gameWidth, config.game.gameHeight);
+        pipe.setRandomPosition(config.game.windowConfig.gameWidth, config.game.windowConfig.gameHeight);
         pipes.add(pipe);
     }
 

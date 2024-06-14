@@ -158,10 +158,10 @@ public class MainController {
     }
 
     private void resizeCanvas() {
-        config.game.gameWidth = rootPane.getWidth() - 105;
-        config.game.gameHeight = rootPane.getHeight();
-        mainCanvas.setWidth(config.game.gameWidth);
-        mainCanvas.setHeight(config.game.gameHeight);
+        config.game.windowConfig.gameWidth = rootPane.getWidth() - 100;
+        config.game.windowConfig.gameHeight = rootPane.getHeight();
+        mainCanvas.setWidth(config.game.windowConfig.gameWidth);
+        mainCanvas.setHeight(config.game.windowConfig.gameHeight);
         setUpTextField();
     }
 

@@ -11,6 +11,10 @@
   },
   "game": {
     "gameTitle": "learning birds",
+    "windowConfig": {
+      "minWidth" : 400.0,
+      "minHeight" : 300.0
+    },
     "birdConfig": {
       "startPositionX": 50.0,
       "startPositionY": 100.0,

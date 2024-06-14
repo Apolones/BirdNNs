@@ -35,6 +35,8 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle(config.game.gameTitle);
         stage.setResizable(true);
+        stage.setMinHeight(config.game.windowConfig.minHeight);
+        stage.setMinWidth(config.game.windowConfig.minWidth);
         stage.setScene(scene);
         stage.getIcons().add(new Image(config.resources.iconImage));
         stage.show();

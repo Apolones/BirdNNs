@@ -19,6 +19,9 @@ public class BackgroundTest {
     private Config.GameConfig game;
 
     @Mock
+    private Config.GameConfig.WindowConfig windowConfig;
+
+    @Mock
     private Config.GameConfig.BackgroundConfig backgroundConfig;
 
     private Background background;
@@ -26,10 +29,11 @@ public class BackgroundTest {
     @BeforeEach
     public void setUp() {
         config.game = game;
+        game.windowConfig = windowConfig;
         game.backgroundConfig = backgroundConfig;
         backgroundConfig.speed = 5.0;
-        game.gameWidth = 400;
-        game.gameHeight = 400;
+        game.windowConfig.gameWidth = 400;
+        game.windowConfig.gameHeight = 400;
 
         background = new Background(config);
     }

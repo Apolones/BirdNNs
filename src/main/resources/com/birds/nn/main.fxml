@@ -9,88 +9,88 @@
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.birds.nn.gameCore.gameLoop.MainController">
     <Canvas fx:id="mainCanvas" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="100.0"
             AnchorPane.topAnchor="0.0"/>
-    <Button layoutY="370.0" onAction="#nextGen" prefHeight="25.0" prefWidth="74.0" text="nextGen"
-            AnchorPane.rightAnchor="5.0"/>
+    <Button onAction="#nextGen" prefHeight="25.0" prefWidth="74.0" text="nextGen"
+            AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="370.0"/>
     <Button layoutY="335.0" onAction="#save" text="Save" AnchorPane.rightAnchor="5.0"/>
-    <Slider fx:id="speedSlider" layoutY="22.0" max="150.0" min="5.0" prefHeight="14.0" prefWidth="95.0"
-            AnchorPane.rightAnchor="5.0"/>
-    <Text layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Game speed" wrappingWidth="74.0"
-          AnchorPane.rightAnchor="5.0"/>
-    <CheckBox fx:id="hideHitbox" layoutY="42.0" mnemonicParsing="false" prefHeight="0.0" prefWidth="78.0"
-              text="Show hitbox" AnchorPane.rightAnchor="5.0">
+    <Slider fx:id="speedSlider" max="150.0" min="5.0" prefHeight="14.0" prefWidth="90.0"
+            AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="22.0"/>
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Game speed" wrappingWidth="74.0"
+          AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="7.0"/>
+    <CheckBox fx:id="hideHitbox" mnemonicParsing="false" prefHeight="0.0" prefWidth="78.0"
+              text="Show hitbox" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="42.0">
         <font>
             <Font size="10.0"/>
         </font>
     </CheckBox>
-    <TextField fx:id="startPositionX" accessibleHelp="Bird start position on X" alignment="CENTER" prefHeight="25.0"
-               prefWidth="53.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="60.0"/>
-    <TextField fx:id="startPositionY" accessibleHelp="Bird start position on Y" alignment="CENTER" prefHeight="25.0"
-               prefWidth="53.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="90.0"/>
-    <TextField fx:id="gravity" accessibleHelp="Bird gravity" alignment="CENTER" prefHeight="25.0" prefWidth="53.0"
+    <TextField fx:id="startPositionX" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
+               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="60.0"/>
+    <TextField fx:id="startPositionY" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
+               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="90.0"/>
+    <TextField fx:id="gravity" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
                AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="120.0"/>
-    <TextField fx:id="maxSpeed" accessibleHelp="Bird maximum speed" alignment="CENTER" prefHeight="25.0"
-               prefWidth="53.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="150.0"/>
-    <TextField fx:id="tapSpeed" accessibleHelp="Tap button speed" alignment="CENTER" prefHeight="25.0" prefWidth="53.0"
+    <TextField fx:id="maxSpeed" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
+               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="150.0"/>
+    <TextField fx:id="tapSpeed" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
                AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="180.0"/>
-    <TextField fx:id="distanceBetweenPipe" accessibleHelp="Count pipe on screen" alignment="CENTER" prefHeight="25.0"
-               prefWidth="53.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="210.0"/>
-    <TextField fx:id="pipeSpeed" accessibleHelp="Pipe speed" alignment="CENTER" prefHeight="25.0" prefWidth="53.0"
+    <TextField fx:id="distanceBetweenPipe" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
+               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="210.0"/>
+    <TextField fx:id="pipeSpeed" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
                AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="240.0"/>
-    <TextField fx:id="pipeWidth" accessibleHelp="pipe width" alignment="CENTER" prefHeight="25.0" prefWidth="53.0"
+    <TextField fx:id="pipeWidth" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
                AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="270.0"/>
-    <TextField fx:id="pipeHoleSize" accessibleHelp="pipe hole on Y" alignment="CENTER" prefHeight="25.0"
-               prefWidth="53.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="300.0"/>
+    <TextField fx:id="pipeHoleSize" alignment="CENTER" prefHeight="25.0" prefWidth="48.0"
+               AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="300.0"/>
 
-    <Text layoutX="520.0" layoutY="75.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="X" textAlignment="CENTER"
-          wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="66.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="X" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="66.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="105.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="Y" textAlignment="CENTER"
-          wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="96.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Y" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="96.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="135.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="gravity"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="126.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="gravity" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="126.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="158.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="max speed"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="149.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="max speed" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="149.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="188.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="tap speed"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="179.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="tap speed" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="179.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="218.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="between pipe"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="209.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="between pipe" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="209.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="248.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="pipe speed"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="239.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="pipe speed" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="239.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="278.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="pipe width"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="269.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="pipe width" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="269.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>
     </Text>
-    <Text layoutX="520.0" layoutY="309.052734375" strokeType="OUTSIDE" strokeWidth="0.0" text="pipe hole on Y"
-          textAlignment="CENTER" wrappingWidth="41.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="300.0">
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="pipe hole on Y" textAlignment="CENTER"
+          wrappingWidth="41.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="300.0">
         <font>
             <Font name="Arial" size="10.0"/>
         </font>

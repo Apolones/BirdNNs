@@ -19,7 +19,7 @@ public class Background extends Block {
 
     public void updateState() {
         setX(getX() - speed);
-        if (getX() <= -config.game.gameWidth)
+        if (getX() <= -config.game.windowConfig.gameWidth)
             setX(0);
     }
 }
