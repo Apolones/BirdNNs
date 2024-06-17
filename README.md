@@ -10,6 +10,7 @@ Learning Birds is a Java-based implementation of the Flappy Bird game, where the
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Configuration](#configuration)
+- [Screenshots](#screenshots)
 
 ## Technologies
 
@@ -80,3 +81,7 @@ Learning Birds is a Java-based implementation of the Flappy Bird game, where the
 ## Configuration
 
 Configuration is managed via `src/main/resources/com/birds/nn/config.json`. You can adjust game settings, neural network parameters, and other configurations.
+
+## Screenshots
+![Screenshot 2024-06-17 183009](https://github.com/Apolones/LearningBirds/assets/85924175/29ef72cc-8a77-480c-982a-c69f9fc1931b)
+
